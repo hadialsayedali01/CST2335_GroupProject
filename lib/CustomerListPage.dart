@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project_test/ProjectDatabase.dart';
-
 import 'models/Customer.dart';
 import 'DAOs/CustomerDAO.dart';
 
@@ -13,29 +12,37 @@ class CustomerListPage extends StatefulWidget {
 
 class CustomerListPageState extends State<CustomerListPage> {
 
-  var titleFontStyle = TextStyle(fontSize: 20);
-  var buttonFontStyle = TextStyle(fontSize: 15, color: Colors.black);
+  late TextEditingController firstNameController = TextEditingController();
+  late TextEditingController lastNameController = TextEditingController();
+  late TextEditingController addressController = TextEditingController();
+  late TextEditingController dateOfBirthController = TextEditingController();
+  late TextEditingController driversLicenseController = TextEditingController();
 
-  var customers = <Customer>[];
+  Customer? selectedCustomer = null;
 
-  late CustomerDAO dao;
+  List<Customer> customers = [];
+
+  late CustomerDAO customerDAO;
+
+  bool formOpenFlag = false;
 
   @override
   void initState(){
     super.initState();
-    $FloorProjectDatabase
-          .databaseBuilder('ProjectDatabase')
-          .build()
-          .then(
-        (database){
-          dao = database.customerDAO;
-          dao.insertCustomer(Customer(Customer.ID++, "Hadi", "Ali", "12313 Home ST", '2001-01-01', 'H1H1H1'));
-          dao.getAllCustomers().then(
-              (customerList){
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    addressController = TextEditingController();
+    dateOfBirthController = TextEditingController();
+    driversLicenseController = TextEditingController();
+    $FloorProjectDatabase.databaseBuilder('customer_database.db').build().then(
+            (database){
+          customerDAO = database.customerDAO;
+          customerDAO.insertCustomer(Customer(Customer.ID++,"Hadi","Ali","123 Home St","123 sdfas", "123 AAA"));
+          customerDAO.getAllCustomers().then(
+                  (allCustomers){
                 setState(
-                    () {
-                      customers.addAll(customerList);
-                      print(customers[0].firstName);
+                        (){
+                      customers = allCustomers;
                     }
                 );
               }
@@ -44,36 +51,235 @@ class CustomerListPageState extends State<CustomerListPage> {
     );
   }
 
-  Widget ListPage(){
-    return ListView.builder(
-      itemCount: customers.length,
-      itemBuilder: (context, rowNum){
+  @override
+  void dispose(){
+    super.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    addressController.dispose();
+    dateOfBirthController.dispose();
+    driversLicenseController.dispose();
+  }
+
+  //layout methods
+  Widget responsiveLayout(){
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    //If landscape and customer NOT selected, show listview
+    if ((width>height) && (width>720)){
+      if (selectedCustomer==null){
+        return Expanded(child:ListPage());
+      }
+      else {
+        // If landsacep and customer selected, show both
         return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(customers[0].firstName)
-          ],
+            Expanded(
+              flex: 1,
+              child: ListPage()
+            ),
+            Expanded(
+              flex: 1,
+              child: DetailsPage()
+            )
+          ]
         );
       }
+    }
+    // if in potrait mode
+    else {
+      if (selectedCustomer==null){
+        //just show listview
+        return Expanded(child:ListPage());
+      }
+      else {
+        //just show detailsPage
+        return DetailsPage();
+      }
+    }
+
+  }
+
+  // helper methods
+  void addCustomer(){
+    setState(
+            (){
+          Customer? newCustomer = Customer(
+              Customer.ID++,
+              firstNameController.value.text,
+              lastNameController.value.text,
+              addressController.value.text,
+              dateOfBirthController.value.text,
+              driversLicenseController.value.text
+          );
+          customers.add(newCustomer);
+          customerDAO.insertCustomer(newCustomer);
+          firstNameController.text="";
+          lastNameController.text="";
+          addressController.text="";
+          dateOfBirthController.text="";
+          driversLicenseController.text="";
+        }
+    );
+  }
+
+  void removeCustomerByRowNum(rowNum){
+    setState(
+            (){
+          customerDAO.deleteCustomer(customers[rowNum]);
+          customers.removeAt(rowNum);
+          Navigator.pop(context);
+        }
+    );
+  }
+
+  void removeCustomerByObject(Customer customer){
+    setState(
+            (){
+          customerDAO.deleteCustomer(customer);
+          customers.remove(customer);
+        }
+    );
+  }
+
+  Widget someDetail(String label){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(label)
+      ],
+    );
+  }
+
+  Widget? returnButtonType(String type){
+    switch (type){
+      case "add":
+        return ElevatedButton(child: Text("Add"), onPressed:(){addCustomer();});
+      case "remove":
+        return ElevatedButton(child: Text("Remove"), onPressed:(){removeCustomerByObject(selectedCustomer!);});
+      case "update":
+        return ElevatedButton(child: Text("Update"), onPressed:(){});
+      case "close":
+        return ElevatedButton(child: Text("Close"), onPressed:(){setState((){selectedCustomer=null; formOpenFlag=false;});});
+      default:
+        return null;
+    }
+
+
+  }
+
+  Widget DetailsPage(){
+    // If a customer is not selected, display the form for entering a customer
+    if (selectedCustomer == null){
+      firstNameController.text = "";
+      lastNameController.text = "";
+      addressController.text = "";
+      dateOfBirthController.text = "";
+      driversLicenseController.text = "";
+      return Column(
+        children: [
+          returnOneController(firstNameController, "First Name"),
+          returnOneController(lastNameController, "Last Name"),
+          returnOneController(addressController, "Address"),
+          returnOneController(dateOfBirthController, "Date of Birth"),
+          returnOneController(driversLicenseController, "Driver's License"),
+          returnButtonType("add")!,
+          returnButtonType("close")!
+        ]
+      );
+    }
+    // if customer is selected, show that customer's info in the forms
+    else {
+      firstNameController.text = selectedCustomer!.firstName;
+      lastNameController.text = selectedCustomer!.lastName;
+      addressController.text = selectedCustomer!.address;
+      dateOfBirthController.text = selectedCustomer!.dateOfBirth;
+      driversLicenseController.text = selectedCustomer!.driversLicense;
+      return Column (
+        children: [
+          returnOneController(firstNameController, "First Name"),
+          returnOneController(lastNameController, "Last Name"),
+          returnOneController(addressController, "Address"),
+          returnOneController(dateOfBirthController, "Date of Birth"),
+          returnOneController(driversLicenseController, "Driver's License")
+        ]
+      );
+    }
+  }
+
+  Widget ListPage(){
+    if (customers.length==0){
+      return
+        Column(
+          children:[
+            Text("There are no customers in the list."),
+            ElevatedButton(child:Text("Add New Customer"), onPressed:(){})
+          ]
+        );
+    }
+    else {
+      return
+        ListView.builder(
+            itemCount: customers.length,
+            itemBuilder: (context, rowNum){
+              return GestureDetector(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("${rowNum+1}: ${customers[rowNum].firstName} last name: ${customers[rowNum].lastName}")
+                    ]
+                ),
+                onTap: (){
+                  setState(
+                          (){
+                        selectedCustomer = customers[rowNum];
+                      }
+                  );
+                },
+              );
+            }
+        );
+    }
+  }
+
+  Widget returnOneController(TextEditingController controller, String label){
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(child:TextField(controller: controller, decoration: InputDecoration(border: OutlineInputBorder(), hintText: label)))
+        ]
     );
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Customer List")
+        centerTitle: true,
+
       ),
-        body: Center (
-            child:
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Flexible(child: ListPage())
-                ]
-            )
-        )
+      body: Column(
+
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          responsiveLayout()
+          /*// Row of text fields and buttons
+          returnOneController(firstNameController, "First Name"),
+          returnOneController(lastNameController, "Last Name"),
+          returnOneController(addressController, "Address"),
+          returnOneController(dateOfBirthController, "Date of Birth"),
+          returnOneController(driversLicenseController, "Driver's License"),
+          ElevatedButton(
+            child: Text("Enter Customer"),
+            onPressed: (){addCustomer();}
+          ),
+          Expanded(child:responsiveLayout())*/
+        ],
+      ),
     );
   }
-
 }
