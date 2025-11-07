@@ -67,30 +67,30 @@ class CustomerListPageState extends State<CustomerListPage> {
     var height = MediaQuery.of(context).size.height;
     //If landscape and customer NOT selected, show listview
     if ((width>height) && (width>720)){
-      if (selectedCustomer==null){
-        return ListPage();
-      }
-      else {
+      if (selectedCustomer!=null || formOpenFlag){
         // If landsacep and customer selected, show both
         return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(child:ListPage()),
-            Expanded(child:DetailsPage())
-          ]
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child:ListPage()),
+              Expanded(child:DetailsPage())
+            ]
         );
+      }
+      else {
+        return ListPage();
       }
     }
     // if in potrait mode
     else {
-      if (selectedCustomer==null){
+      if (selectedCustomer!=null || formOpenFlag){
         //just show listview
-        return ListPage();
+        return DetailsPage();
       }
       else {
         //just show detailsPage
-        return DetailsPage();
+        return ListPage();
       }
     }
 
@@ -224,7 +224,6 @@ class CustomerListPageState extends State<CustomerListPage> {
             child: Text("Add New Customer"),
             onPressed: () {
               setState(() {
-                selectedCustomer = null;
                 formOpenFlag = true;
               });
             },
@@ -240,7 +239,6 @@ class CustomerListPageState extends State<CustomerListPage> {
               child: Text("Add New Customer"),
               onPressed: () {
                 setState(() {
-                  selectedCustomer = null;
                   formOpenFlag = true;
                 });
               },
