@@ -98,12 +98,25 @@ class CustomerListPageState extends State<CustomerListPage> {
 
   // helper methods
   void updateCustomer(){
-    setState(
-        (){
-          //customerDAO.updateCustomer(customer)
-        }
-    );
-  }
+        //update the fields for selectedCustomer
+        selectedCustomer!.driversLicense=driversLicenseController.value.text;
+        selectedCustomer!.firstName=firstNameController.value.text;
+        selectedCustomer!.lastName=lastNameController.value.text;
+        selectedCustomer!.address=addressController.value.text;
+        selectedCustomer!.dateOfBirth=dateOfBirthController.value.text;
+        customerDAO.updateCustomer(selectedCustomer!).then(
+            (dummyParam){
+              setState((){
+                customerDAO.getAllCustomers().then((dbList){
+                  customers=dbList;
+                });
+              });
+            }
+        );
+        selectedCustomer = null;
+        formOpenFlag = false;
+
+    }
 
   void addCustomer(){
     setState(
@@ -123,6 +136,9 @@ class CustomerListPageState extends State<CustomerListPage> {
           addressController.text="";
           dateOfBirthController.text="";
           driversLicenseController.text="";
+
+          selectedCustomer = null;
+          formOpenFlag = false;
         }
     );
   }
@@ -163,7 +179,7 @@ class CustomerListPageState extends State<CustomerListPage> {
       case "remove":
         return ElevatedButton(child: Text("Remove"), onPressed:(){removeCustomerByObject(selectedCustomer!);});
       case "update":
-        return ElevatedButton(child: Text("Update"), onPressed:(){});
+        return ElevatedButton(child: Text("Update"), onPressed:(){updateCustomer();});
       case "close":
         return ElevatedButton(child: Text("Close"), onPressed:(){setState((){selectedCustomer=null; formOpenFlag=false;});});
       default:
@@ -216,8 +232,10 @@ class CustomerListPageState extends State<CustomerListPage> {
   }
 
   Widget ListPage() {
-    if (customers.isEmpty) {
+    if (customers.length==0) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text("There are no customers in the list."),
           ElevatedButton(
@@ -234,7 +252,7 @@ class CustomerListPageState extends State<CustomerListPage> {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8),
             child: ElevatedButton(
               child: Text("Add New Customer"),
               onPressed: () {
