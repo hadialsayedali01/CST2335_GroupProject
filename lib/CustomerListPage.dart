@@ -68,7 +68,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     //If landscape and customer NOT selected, show listview
     if ((width>height) && (width>720)){
       if (selectedCustomer==null){
-        return Expanded(child:ListPage());
+        return ListPage();
       }
       else {
         // If landsacep and customer selected, show both
@@ -76,14 +76,8 @@ class CustomerListPageState extends State<CustomerListPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 1,
-              child: ListPage()
-            ),
-            Expanded(
-              flex: 1,
-              child: DetailsPage()
-            )
+            Expanded(child:ListPage()),
+            Expanded(child:DetailsPage())
           ]
         );
       }
@@ -92,7 +86,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     else {
       if (selectedCustomer==null){
         //just show listview
-        return Expanded(child:ListPage());
+        return ListPage();
       }
       else {
         //just show detailsPage
@@ -103,6 +97,14 @@ class CustomerListPageState extends State<CustomerListPage> {
   }
 
   // helper methods
+  void updateCustomer(){
+    setState(
+        (){
+          //customerDAO.updateCustomer(customer)
+        }
+    );
+  }
+
   void addCustomer(){
     setState(
             (){
@@ -140,6 +142,7 @@ class CustomerListPageState extends State<CustomerListPage> {
             (){
           customerDAO.deleteCustomer(customer);
           customers.remove(customer);
+          selectedCustomer = null;
         }
     );
   }
@@ -203,46 +206,77 @@ class CustomerListPageState extends State<CustomerListPage> {
           returnOneController(lastNameController, "Last Name"),
           returnOneController(addressController, "Address"),
           returnOneController(dateOfBirthController, "Date of Birth"),
-          returnOneController(driversLicenseController, "Driver's License")
+          returnOneController(driversLicenseController, "Driver's License"),
+          returnButtonType("remove")!,
+          returnButtonType("update")!,
+          returnButtonType("close")!
         ]
       );
     }
   }
 
-  Widget ListPage(){
-    if (customers.length==0){
-      return
-        Column(
-          children:[
-            Text("There are no customers in the list."),
-            ElevatedButton(child:Text("Add New Customer"), onPressed:(){})
-          ]
-        );
-    }
-    else {
-      return
-        ListView.builder(
-            itemCount: customers.length,
-            itemBuilder: (context, rowNum){
-              return GestureDetector(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("${rowNum+1}: ${customers[rowNum].firstName} last name: ${customers[rowNum].lastName}")
-                    ]
-                ),
-                onTap: (){
-                  setState(
-                          (){
-                        selectedCustomer = customers[rowNum];
-                      }
-                  );
-                },
-              );
-            }
-        );
+  Widget ListPage() {
+    if (customers.isEmpty) {
+      return Column(
+        children: [
+          Text("There are no customers in the list."),
+          ElevatedButton(
+            child: Text("Add New Customer"),
+            onPressed: () {
+              setState(() {
+                selectedCustomer = null;
+                formOpenFlag = true;
+              });
+            },
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              child: Text("Add New Customer"),
+              onPressed: () {
+                setState(() {
+                  selectedCustomer = null;
+                  formOpenFlag = true;
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: customers.length,
+              itemBuilder: (context, rowNum) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedCustomer = customers[rowNum];
+                      formOpenFlag = false;
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "${rowNum + 1}: ${customers[rowNum].firstName} ${customers[rowNum].lastName}",
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
     }
   }
+
 
   Widget returnOneController(TextEditingController controller, String label){
     return Row(
@@ -266,18 +300,7 @@ class CustomerListPageState extends State<CustomerListPage> {
 
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          responsiveLayout()
-          /*// Row of text fields and buttons
-          returnOneController(firstNameController, "First Name"),
-          returnOneController(lastNameController, "Last Name"),
-          returnOneController(addressController, "Address"),
-          returnOneController(dateOfBirthController, "Date of Birth"),
-          returnOneController(driversLicenseController, "Driver's License"),
-          ElevatedButton(
-            child: Text("Enter Customer"),
-            onPressed: (){addCustomer();}
-          ),
-          Expanded(child:responsiveLayout())*/
+          Expanded(child:responsiveLayout())
         ],
       ),
     );
