@@ -363,7 +363,7 @@ class CustomerListPageState extends State<CustomerListPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.translate('NoCustomer')!),
+              Padding(padding:EdgeInsets.all(5), child: Text(AppLocalizations.of(context)!.translate('NoCustomer')!)),
               ElevatedButton(
                 child: Text(AppLocalizations.of(context)!.translate('AddNewCustomer')!),//AppLocalizations.of(context)!.translate("AddNewCustomer")!),
                 onPressed: () {
@@ -395,27 +395,22 @@ class CustomerListPageState extends State<CustomerListPage> {
             child: ListView.builder(
               itemCount: customers.length,
               itemBuilder: (context, rowNum) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedCustomer = customers[rowNum];
-                      loadSelectedCustomer();
-                      formOpenFlag = false;
-                    });
-                  },
-                  child: Padding(
+                return Padding(
                     padding: EdgeInsets.fromLTRB(200,5,200,5),
                     child: ElevatedButton(
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      //children: [
-                        onPressed:(){},
+                        onPressed:(){
+                          setState(() {
+                            selectedCustomer = customers[rowNum];
+                            loadSelectedCustomer();
+                            formOpenFlag = false;
+                          });
+                        },
                         child:Text(
                           "${rowNum + 1}: ${customers[rowNum].lastName}, ${customers[rowNum].firstName}"
                         ),
                       //],
                     ),
-                  ),
-                );
+                  );
               },
             ),
           ),
