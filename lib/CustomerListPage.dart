@@ -69,6 +69,10 @@ class CustomerListPageState extends State<CustomerListPage> {
 
   String potentialErrorMessage = "";
 
+  SnackBar snackbar = SnackBar (
+    content: Text("Customer added.")
+  );
+
   @override
   void initState(){
     super.initState();
@@ -215,6 +219,7 @@ class CustomerListPageState extends State<CustomerListPage> {
           }
       );
     }
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   void removeCustomerByRowNum(rowNum){
@@ -332,7 +337,7 @@ class CustomerListPageState extends State<CustomerListPage> {
           returnOneController(driversLicenseController, AppLocalizations.of(context)!.translate("DriversLicense")!),
           returnButtonType("add")!,
           returnButtonType("close")!,
-          Text(potentialErrorMessage),
+          Text(potentialErrorMessage, style:TextStyle(color:Colors.red)),
         ],
       );
     }
@@ -437,6 +442,21 @@ class CustomerListPageState extends State<CustomerListPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          OutlinedButton(onPressed: (){
+            showDialog(
+                context: context,
+                builder: (BuildContext context){
+                  return AlertDialog(
+                    title: Text("Instructions"),
+                    content: Text(
+                        "(1) Add customers using the 'Add Customer' button.\n"+
+                        "(2) From the details form, you can load an existing customer or clear the fields.\n"+
+                        "(3) Update or delete customers by clicking on an existing customer in the list, then clicking the appropriate button.\n"
+                    ),
+                    actions: [ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text("Close"))]
+                  );
+                });
+          }, child: Text("Instructions")),
           FilledButton(onPressed:(){MyApp.setLocale(context, Locale("en"));}, child: Text(AppLocalizations.of(context)!.translate("English")!)),
           FilledButton(onPressed:(){MyApp.setLocale(context, Locale("fr"));}, child: Text(AppLocalizations.of(context)!.translate("French")!))
         ],
