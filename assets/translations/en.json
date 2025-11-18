@@ -1,0 +1,17 @@
+{
+  "AddNewCustomer": "Add New Customer",
+  "Add": "Add",
+  "Remove": "Remove",
+  "Close": "Close",
+  "English": "English",
+  "French": "French",
+  "Update": "Update",
+  "FirstName": "First Name",
+  "LastName": "Last Name",
+  "Address": "Address",
+  "DateOfBirth": "Date of Birth",
+  "DriversLicense": "Driver's License",
+  "NoCustomer": "There are no customers in the list.",
+  "LoadLastCustomer": "Load Last Customer",
+  "ResetFields": "Reset Fields"
+}

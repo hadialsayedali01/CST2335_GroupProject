@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'AppLocalizations.dart';
 
 import 'BoatsForSalePage.dart';
 import 'CarsForSalePage.dart';
@@ -9,14 +12,46 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  static void setLocale(BuildContext context, Locale newLocale) async {
+
+    //this retrieves the state
+    print("Tried to change language");
+    MyAppState? state = context.findAncestorStateOfType<MyAppState>();
+    state?.changeLanguage(newLocale);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  MyAppState createState(){
+    return MyAppState();
+  }
+}
+
+class MyAppState extends State<MyApp>{
+  var _locale = Locale("en", "CA");
+  void changeLanguage(Locale locale){
+    setState(
+        (){
+          _locale = locale;
+        }
+    );
+  }
+
+  @override
+  Widget build(BuildContext context){
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      supportedLocales: [
+        Locale("en", "CA"),
+        Locale("fr")
+      ],
+      localizationsDelegates: const [   //copy and paste this, don't change it
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      locale: _locale,
       routes: {
         'customerList' : (context) => CustomerListPage(),
         'carsForSale' : (context) => CarsForSalePage(),
@@ -29,6 +64,7 @@ class MyApp extends StatelessWidget {
         useSystemColors: true,
       ),
       home: const MyHomePage(title: 'CST2355 Group Project'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
