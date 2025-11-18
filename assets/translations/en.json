@@ -13,5 +13,10 @@
   "DriversLicense": "Driver's License",
   "NoCustomer": "There are no customers in the list.",
   "LoadLastCustomer": "Load Last Customer",
-  "ResetFields": "Reset Fields"
+  "ResetFields": "Reset Fields",
+  "CustomerAdded": "Customer added",
+  "EmptyFields": "Please enter a value for all fields.",
+  "InstructionsTitle": "Instructions",
+  "FullInstructions": "(1) Add customers using the 'Add Customer' button.\n(2) From the details form, you can load an existing customer or clear the fields.\n(3) Update or delete customers by clicking on an existing customer in the list, then clicking the appropriate button.\n",
+  "CustomerListTitle": "Customer List"
 }

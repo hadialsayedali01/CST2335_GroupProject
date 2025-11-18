@@ -25,7 +25,6 @@ class DataRepository {
 
   static void saveDate(){
     encSP.setString("firstName", firstName!);
-    print("saved ${firstName} to data repository");
     encSP.setString("lastName", lastName!);
     encSP.setString("address", address!);
     encSP.setString("dateOfBirth", dateOfBirth!);
@@ -68,10 +67,6 @@ class CustomerListPageState extends State<CustomerListPage> {
   bool formOpenFlag = false;
 
   String potentialErrorMessage = "";
-
-  SnackBar snackbar = SnackBar (
-    content: Text("Customer added.")
-  );
 
   @override
   void initState(){
@@ -172,7 +167,6 @@ class CustomerListPageState extends State<CustomerListPage> {
 
   void placeDataInRepository(){
     DataRepository.firstName=firstNameController.value.text;
-    print("Placed ${DataRepository.firstName} into data repostiory");
     DataRepository.lastName=lastNameController.value.text;
     DataRepository.address=addressController.value.text;
     DataRepository.dateOfBirth=dateOfBirthController.value.text;
@@ -184,8 +178,6 @@ class CustomerListPageState extends State<CustomerListPage> {
     if (DataRepository.firstName!=null) {
       setState(
               (){
-            print("Attempted to load last customer data into fields");
-            print("Attempted to load ${DataRepository.firstName}");
             firstNameController.text = DataRepository.firstName!;
             lastNameController.text = DataRepository.lastName!;
             addressController.text = DataRepository.address!;
@@ -218,8 +210,11 @@ class CustomerListPageState extends State<CustomerListPage> {
             resetFields();
           }
       );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar (
+          content: Text(AppLocalizations.of(context)!.translate('CustomerAdded')!)
+      ));
     }
-    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+
   }
 
   void removeCustomerByRowNum(rowNum){
@@ -282,8 +277,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     ){
       setState(
           (){
-            potentialErrorMessage = "Please enter a valid field.";
-            print("Message about valid fields appeared");
+            potentialErrorMessage = AppLocalizations.of(context)!.translate("EmptyFields")!;
           }
       );
       return false;
@@ -291,7 +285,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     else {
       setState(
               (){
-            potentialErrorMessage = "";
+            potentialErrorMessage = AppLocalizations.of(context)!.translate("EmptyFields")!;
           }
       );
       return true;
@@ -327,6 +321,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     // If no customer selected → show blank entry form
     if (selectedCustomer == null) {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           returnButtonType("load")!,
           returnButtonType("reset")!,
@@ -344,6 +339,7 @@ class CustomerListPageState extends State<CustomerListPage> {
 
     // If a customer *is* selected → show editable form
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         returnOneController(firstNameController, AppLocalizations.of(context)!.translate('FirstName')!),
         returnOneController(lastNameController, AppLocalizations.of(context)!.translate('LastName')!),
@@ -408,14 +404,15 @@ class CustomerListPageState extends State<CustomerListPage> {
                     });
                   },
                   child: Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
+                    padding: EdgeInsets.fromLTRB(200,5,200,5),
+                    child: ElevatedButton(
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      //children: [
+                        onPressed:(){},
+                        child:Text(
                           "${rowNum + 1}: ${customers[rowNum].lastName}, ${customers[rowNum].firstName}"
                         ),
-                      ],
+                      //],
                     ),
                   ),
                 );
@@ -441,22 +438,19 @@ class CustomerListPageState extends State<CustomerListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.translate("CustomerListTitle")!),
         actions: [
           OutlinedButton(onPressed: (){
             showDialog(
                 context: context,
                 builder: (BuildContext context){
                   return AlertDialog(
-                    title: Text("Instructions"),
-                    content: Text(
-                        "(1) Add customers using the 'Add Customer' button.\n"+
-                        "(2) From the details form, you can load an existing customer or clear the fields.\n"+
-                        "(3) Update or delete customers by clicking on an existing customer in the list, then clicking the appropriate button.\n"
-                    ),
-                    actions: [ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text("Close"))]
+                    title: Text(AppLocalizations.of(context)!.translate("InstructionsTitle")!),
+                    content: Text(AppLocalizations.of(context)!.translate("FullInstructions")!),
+                    actions: [ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text(AppLocalizations.of(context)!.translate("Close")!))]
                   );
                 });
-          }, child: Text("Instructions")),
+          }, child: Text(AppLocalizations.of(context)!.translate("InstructionsTitle")!)),
           FilledButton(onPressed:(){MyApp.setLocale(context, Locale("en"));}, child: Text(AppLocalizations.of(context)!.translate("English")!)),
           FilledButton(onPressed:(){MyApp.setLocale(context, Locale("fr"));}, child: Text(AppLocalizations.of(context)!.translate("French")!))
         ],

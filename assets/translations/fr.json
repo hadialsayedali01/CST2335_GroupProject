@@ -12,6 +12,11 @@
   "DateOfBirth": "Date de naissance",
   "DriversLicense": "Permis de conduire",
   "NoCustomer": "Il n'y a aucun client dans la liste.",
-  "LoadLastCustomer": "Load Last Customer",
-  "ResetFields": "Reset Fields"
+  "LoadLastCustomer": "Presenter dernier client",
+  "ResetFields": "Réinitialiser",
+  "CustomerAdded": "Client ajouté",
+  "EmptyFields": "Veuillez saisir une valeur dans toutes les cases.",
+  "InstructionsTitle": "Instructions",
+  "FullInstructions": "(1) Ajoutez des clients à l'aide du bouton « Ajouter un client ». \n(2) À partir du formulaire de détails, vous pouvez charger un client existant ou effacer les champs. \n(3) Mettez à jour ou supprimez des clients en cliquant sur un client existant dans la liste, puis en cliquant sur le bouton approprié.",
+  "CustomerListTitle": "Liste des Clients"
 }
