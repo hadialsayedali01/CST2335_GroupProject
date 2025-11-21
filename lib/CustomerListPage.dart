@@ -6,15 +6,26 @@ import 'main.dart';
 import 'models/Customer.dart';
 import 'DAOs/CustomerDAO.dart';
 
+/// This class holds the EncryptedShared preferences instance, exposing methods for loading and saving data to and from it.
+/// @author Hadi Al-Sayed Ali
+/// @version 1.0
 class DataRepository {
+
+  /// The EncryptedSharedPreferences instance, which holds the previously added customer's information.
   static EncryptedSharedPreferences encSP = EncryptedSharedPreferences();
 
+  /// The first name of the previously added customer.
   static String? firstName;
+  /// The last name of the previously added customer.
   static String? lastName;
+  /// The address of the previously added customer.
   static String? address;
+  /// The driver's license of the previously added customer.
   static String? driversLicense;
+  /// The date of birth of the previously added customer.
   static String? dateOfBirth;
 
+  /// This method loads the previously added customer's data into the static class variables
   static void loadData() async {
     firstName = await encSP.getString("firstName");
     lastName = await encSP.getString("lastName");
@@ -23,6 +34,7 @@ class DataRepository {
     driversLicense = await encSP.getString("driversLicense");
   }
 
+  /// This method saves the static class variables representing customer data into the EncryptedSharedPreferences instance
   static void saveDate(){
     encSP.setString("firstName", firstName!);
     encSP.setString("lastName", lastName!);
@@ -33,7 +45,7 @@ class DataRepository {
 }
 
 /// This represents the customer list page, where the end user can add, update, and remove customers.
-/// @author alsa0280
+/// @author Hadi Al-Sayed Ali
 /// @version 1.0
 class CustomerListPage extends StatefulWidget {
   @override
@@ -43,7 +55,7 @@ class CustomerListPage extends StatefulWidget {
 }
 
 /// This represents the state of the customer list page, where page components are controlled.
-/// @author alsa0280
+/// @author Hadi Al-Sayed Ali
 /// @version 1.0
 class CustomerListPageState extends State<CustomerListPage> {
 
@@ -58,14 +70,19 @@ class CustomerListPageState extends State<CustomerListPage> {
   /// The text controller for entering/updating a customer's driver's license.
   late TextEditingController driversLicenseController = TextEditingController();
 
+  /// Holds the information of the customer currently selected by the user (null if one is not selected).
   Customer? selectedCustomer = null;
 
+  /// Holds the list of all customers.
   List<Customer> customers = [];
 
+  /// This object provides the state with a means of querying the database for customer information.
   late CustomerDAO customerDAO;
 
+  /// This indicates whether the customer form should be open.
   bool formOpenFlag = false;
 
+  /// This holds a potential error message, whose value depends on whether the user left any fields empty.
   String potentialErrorMessage = "";
 
   @override
@@ -102,14 +119,12 @@ class CustomerListPageState extends State<CustomerListPage> {
     driversLicenseController.dispose();
   }
 
-  //layout methods
+  /// This method sets the page layout in accordance with the media size and whether a customer has been selected.
   Widget responsiveLayout(){
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    //If landscape and customer NOT selected, show listview
     if ((width>height) && (width>720)){
       if (selectedCustomer!=null || formOpenFlag){
-        // If landsacep and customer selected, show both
         return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,48 +138,18 @@ class CustomerListPageState extends State<CustomerListPage> {
         return ListPage();
       }
     }
-    // if in potrait mode
     else {
       if (selectedCustomer!=null || formOpenFlag){
-        //just show listview
         return DetailsPage();
       }
       else {
-        //just show detailsPage
         return ListPage();
       }
     }
 
   }
 
-  // helper methods
-  void updateCustomer(){
-    setState (
-        (){
-          //update the fields for selectedCustomer
-          selectedCustomer!.driversLicense=driversLicenseController.value.text;
-          selectedCustomer!.firstName=firstNameController.value.text;
-          selectedCustomer!.lastName=lastNameController.value.text;
-          selectedCustomer!.address=addressController.value.text;
-          selectedCustomer!.dateOfBirth=dateOfBirthController.value.text;
-          customerDAO.updateCustomer(selectedCustomer!).then(
-                  (dummyParam){
-                setState((){
-                  customerDAO.getAllCustomers().then((dbList){
-                    customers=dbList;
-                  });
-                });
-              }
-          );
-          selectedCustomer = null;
-          formOpenFlag = false;
-          DataRepository.saveDate();
-          resetFields();
-        }
-    );
-    }
-
-
+  /// This method updates the static class variables of the DataRepository with the values that are currently in the text fields.
   void placeDataInRepository(){
     DataRepository.firstName=firstNameController.value.text;
     DataRepository.lastName=lastNameController.value.text;
@@ -173,6 +158,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     DataRepository.driversLicense=driversLicenseController.value.text;
   }
 
+  /// This method updates the text fields with the values of the static class variables in the DataRepository; i.e., the last-added customer values.
   void loadLastCustomer() {
     DataRepository.loadData();
     if (DataRepository.firstName!=null) {
@@ -188,6 +174,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     }
   }
 
+  /// This method adds a customer to a database and saves their data to the EncryptedSharedPreferences instance, showing a SnackBar to update the user.
   void addCustomer(){
     if (verifyFields()){
       placeDataInRepository();
@@ -214,20 +201,36 @@ class CustomerListPageState extends State<CustomerListPage> {
           content: Text(AppLocalizations.of(context)!.translate('CustomerAdded')!)
       ));
     }
-
   }
 
-  void removeCustomerByRowNum(rowNum){
-    setState(
+  /// This method updates a selected customer by calling the appropriate DAO method, then saves the data to EncryptedSharedPreferences.
+  void updateCustomer(){
+    setState (
             (){
-          customerDAO.deleteCustomer(customers[rowNum]);
-          customers.removeAt(rowNum);
+          selectedCustomer!.driversLicense=driversLicenseController.value.text;
+          selectedCustomer!.firstName=firstNameController.value.text;
+          selectedCustomer!.lastName=lastNameController.value.text;
+          selectedCustomer!.address=addressController.value.text;
+          selectedCustomer!.dateOfBirth=dateOfBirthController.value.text;
+          customerDAO.updateCustomer(selectedCustomer!).then(
+                  (dummyParam){
+                setState((){
+                  customerDAO.getAllCustomers().then((dbList){
+                    customers=dbList;
+                  });
+                });
+              }
+          );
+          selectedCustomer = null;
+          formOpenFlag = false;
+          DataRepository.saveDate();
           resetFields();
-          Navigator.pop(context);
         }
     );
   }
 
+  /// This method removes a customer from the database.
+  /// It has a Customer object parameter; this is the customer that will be removed.
   void removeCustomerByObject(Customer customer){
     setState(
             (){
@@ -239,15 +242,9 @@ class CustomerListPageState extends State<CustomerListPage> {
     );
   }
 
-  Widget someDetail(String label){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(label)
-      ],
-    );
-  }
-
+  /// This method dynamically returns specific types of buttons for use within the DetailsPage.
+  /// It takes a String type parameter that specifies the type of button to return.
+  /// It returns a potentially null Widget that is the returned button.
   Widget? returnButtonType(String type){
     switch (type){
       case "load":
@@ -265,15 +262,17 @@ class CustomerListPageState extends State<CustomerListPage> {
       default:
         return null;
     }
-
-
   }
 
+  /// This method redraws the state to show the error message, depending on whether the user left the fields empty.
+  /// It returns a bool value (true if the fields are valid, false if the fields are invalid).
   bool verifyFields(){
     if (
       firstNameController.value.text == "" ||
       lastNameController.value.text == "" ||
-          addressController.value.text == ""
+      addressController.value.text == "" ||
+      driversLicenseController.value.text == "" ||
+      dateOfBirthController.value.text == ""
     ){
       setState(
           (){
@@ -283,15 +282,11 @@ class CustomerListPageState extends State<CustomerListPage> {
       return false;
     }
     else {
-      setState(
-              (){
-            potentialErrorMessage = AppLocalizations.of(context)!.translate("EmptyFields")!;
-          }
-      );
       return true;
     }
   }
 
+  /// This method is called to load the user-selected customer's details into the form fields.
   void loadSelectedCustomer(){
     setState(
         (){
@@ -304,6 +299,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     );
   }
 
+  /// This method resets/empties the customer form's text fields.
   void resetFields() {
     setState(
             (){
@@ -317,8 +313,9 @@ class CustomerListPageState extends State<CustomerListPage> {
   }
 
 
+  /// This method displays a form where the user can enter, update, or delete a customer.
+  /// The method returns a Column of the customer form, including its text fields and a set of context-dependent buttons.
   Widget DetailsPage() {
-    // If no customer selected → show blank entry form
     if (selectedCustomer == null) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -336,8 +333,6 @@ class CustomerListPageState extends State<CustomerListPage> {
         ],
       );
     }
-
-    // If a customer *is* selected → show editable form
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -354,7 +349,8 @@ class CustomerListPageState extends State<CustomerListPage> {
     );
   }
 
-
+  /// This method displays a clickable list of current customers in the database.
+  /// This method returns a Widget consisting of either customers in the database or a message stating that there are no customers.
   Widget ListPage() {
     if (customers.length==0) {
       return
@@ -419,7 +415,7 @@ class CustomerListPageState extends State<CustomerListPage> {
     }
   }
 
-
+  /// This method dynamically returns text fields for displays with specified labels, for use in DetailsPage.
   Widget returnOneController(TextEditingController controller, String label){
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,

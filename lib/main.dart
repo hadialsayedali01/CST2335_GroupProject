@@ -16,9 +16,6 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   static void setLocale(BuildContext context, Locale newLocale) async {
-
-    //this retrieves the state
-    print("Tried to change language");
     MyAppState? state = context.findAncestorStateOfType<MyAppState>();
     state?.changeLanguage(newLocale);
   }
@@ -46,7 +43,7 @@ class MyAppState extends State<MyApp>{
         Locale("en", "CA"),
         Locale("fr")
       ],
-      localizationsDelegates: const [   //copy and paste this, don't change it
+      localizationsDelegates: const [ 
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -84,6 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
   var homeButtonTextStyle = TextStyle(fontSize: 30, color: Colors.black);
   var homeButtonFixedWidth = 300.0;
 
+  /// This method returns a formatted button that leads to one of the four application pages.
+  /// It takes a String routeName parameter for the name of the route to navigate to.
+  /// It takes a String buttonText parameter for the displayed text on the button.
   Widget? returnFormattedHomeButton(String? routeName, String? buttonText){
     return Padding(
         padding: EdgeInsets.all(homeButtonPadding),
@@ -97,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// This method returns a circular-formatted image.
+  /// It takes a String imageSource parameter that is the path of the image.
   Widget? returnFormattedImage(String? imageSource){
     return Padding(
       padding: EdgeInsets.all(15),
@@ -128,7 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 returnFormattedImage('images/car.jpg')!
               ]
             ),
-            // first two buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -136,7 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 returnFormattedHomeButton("carsForSale" , "Car List")!,
               ]
             ),
-            // next two buttons
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
