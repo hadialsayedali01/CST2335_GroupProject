@@ -1,7 +1,7 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import '../main.dart';
 import '../AppLocalizations.dart';
 import '../ProjectDatabase.dart';
 import '../models/Car.dart';
@@ -27,7 +27,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   final TextEditingController kmController = TextEditingController();
 
   Car? selectedCar;
-
   String formErrorMessage = "";
   final EncryptedSharedPreferences encPrefs = EncryptedSharedPreferences();
 
@@ -109,11 +108,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
         modelText.isEmpty ||
         priceText.isEmpty ||
         kmText.isEmpty) {
-      const msg = "All fields are required.";
+      final msg = AppLocalizations.of(context)!.translate("EmptyFieldsCar")!;
       formErrorMessage = msg;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text(msg)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
       return null;
     }
 
@@ -182,9 +179,11 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
     _clearForm();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Car added successfully")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.translate("CarAdded")!),
+      ),
+    );
   }
 
   Future<void> _updateSelectedCar(BuildContext context) async {
@@ -204,9 +203,11 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     await _saveLastCarToPrefs();
     await _loadCarsFromDatabase();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Car updated")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.translate("CarUpdated")!),
+      ),
+    );
   }
 
   Future<void> _deleteSelectedCar(BuildContext context) async {
@@ -215,16 +216,20 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Confirm delete"),
-        content: const Text("Are you sure you want to delete this car?"),
+        title: Text(
+          AppLocalizations.of(context)!.translate("DeleteCarConfirmTitle")!,
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.translate("DeleteCarConfirmMessage")!,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+            child: Text(AppLocalizations.of(context)!.translate("No")!),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Delete"),
+            child: Text(AppLocalizations.of(context)!.translate("Yes")!),
           ),
         ],
       ),
@@ -242,9 +247,11 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
     _clearForm();
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text("Car deleted")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.translate("CarDeleted")!),
+      ),
+    );
   }
 
   void _populateFormFromCar(Car car) {
@@ -285,13 +292,13 @@ class CarsForSalePageState extends State<CarsForSalePage> {
                 _clearForm();
               });
             },
-            child: const Text("Add New Car"),
+            child: Text(AppLocalizations.of(context)!.translate("AddNewCar")!),
           ),
           const SizedBox(height: 10),
           cars.isEmpty
-              ? const Text(
-                  "There are no cars in the list",
-                  style: TextStyle(fontSize: 18, color: Colors.blue),
+              ? Text(
+                  AppLocalizations.of(context)!.translate("NoCars")!,
+                  style: const TextStyle(fontSize: 18, color: Colors.blue),
                 )
               : Expanded(
                   child: ListView.builder(
@@ -336,12 +343,17 @@ class CarsForSalePageState extends State<CarsForSalePage> {
           children: [
             ElevatedButton(
               onPressed: _loadLastCarFromPrefs,
-              child: const Text("Load Previous Car"),
+              child: Text(
+                AppLocalizations.of(context)!.translate("LoadLastCar")!,
+              ),
             ),
+
             const SizedBox(height: 16),
 
             Text(
-              editing ? "Edit Car" : "Add New Car",
+              editing
+                  ? AppLocalizations.of(context)!.translate("Details")!
+                  : AppLocalizations.of(context)!.translate("AddNewCar")!,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
@@ -351,27 +363,27 @@ class CarsForSalePageState extends State<CarsForSalePage> {
               controller: yearController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Year",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.translate("Year")!,
               ),
             ),
             const SizedBox(height: 10),
 
             TextField(
               controller: makeController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Make",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.translate("Make")!,
               ),
             ),
             const SizedBox(height: 10),
 
             TextField(
               controller: modelController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Model",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.translate("Model")!,
               ),
             ),
             const SizedBox(height: 10),
@@ -382,9 +394,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
               ],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Price",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.translate("Price")!,
               ),
             ),
             const SizedBox(height: 10),
@@ -395,9 +407,11 @@ class CarsForSalePageState extends State<CarsForSalePage> {
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
               ],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Kilometers",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(
+                  context,
+                )!.translate("Kilometers")!,
               ),
             ),
 
@@ -414,21 +428,29 @@ class CarsForSalePageState extends State<CarsForSalePage> {
                 if (!editing)
                   ElevatedButton(
                     onPressed: () => _submitNewCar(context),
-                    child: const Text("Add"),
+                    child: Text(
+                      AppLocalizations.of(context)!.translate("Add")!,
+                    ),
                   ),
                 if (editing)
                   ElevatedButton(
                     onPressed: () => _updateSelectedCar(context),
-                    child: const Text("Update"),
+                    child: Text(
+                      AppLocalizations.of(context)!.translate("Update")!,
+                    ),
                   ),
                 if (editing)
                   ElevatedButton(
                     onPressed: () => _deleteSelectedCar(context),
-                    child: const Text("Delete"),
+                    child: Text(
+                      AppLocalizations.of(context)!.translate("Remove")!,
+                    ),
                   ),
                 ElevatedButton(
                   onPressed: _clearForm,
-                  child: const Text("Reset Fields"),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate("ResetCarFields")!,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -438,7 +460,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
                       _clearForm();
                     });
                   },
-                  child: const Text("Close"),
+                  child: Text(
+                    AppLocalizations.of(context)!.translate("Close")!,
+                  ),
                 ),
               ],
             ),
@@ -451,7 +475,64 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Car List")),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.translate("CarListTitle")!),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
+        actions: [
+          // Instructions button
+          OutlinedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.translate("CarInstructionsTitle")!,
+                    ),
+                    content: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.translate("CarInstructions")!,
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          AppLocalizations.of(context)!.translate("Close")!,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)!.translate("CarInstructionsTitle")!,
+            ),
+          ),
+
+          // English
+          FilledButton(
+            onPressed: () {
+              MyApp.setLocale(context, const Locale("en"));
+            },
+            child: Text(AppLocalizations.of(context)!.translate("English")!),
+          ),
+
+          // Arabic (use native name)
+          FilledButton(
+            onPressed: () {
+              MyApp.setLocale(context, const Locale("ar"));
+            },
+            child: const Text("العربية"),
+          ),
+        ],
+      ),
+
       body: reactiveLayout(),
     );
   }
