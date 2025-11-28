@@ -27,6 +27,7 @@
   "Model": "Model",
   "Price": "Price",
   "Kilometers": "Kilometers Driven",
+  "KilometersDriven": "Kilometers Driven",
 
   "CarAdded": "Car added",
   "CarUpdated": "Car updated",
