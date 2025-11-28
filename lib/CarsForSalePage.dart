@@ -1,7 +1,11 @@
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
-import '../DAOs/CarDAO.dart';
-import '../models/Car.dart';
+
+import '../AppLocalizations.dart';
 import '../ProjectDatabase.dart';
+import '../main.dart';
+import '../models/Car.dart';
+import '../DAOs/CarDAO.dart';
 
 /// Page for managing and viewing cars available for sale.
 /// This page will support listing, inserting, updating, and viewing details
@@ -22,20 +26,23 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   /// List of cars loaded from the database.
   List<Car> cars = [];
 
-  /// Controller for entering the car's manufacturing year.
-  final yearController = TextEditingController();
+  /// Indicates that the form is currently being used to create a new car.
+  bool isCreatingNewCar = false;
 
-  /// Controller for entering the car's make.
-  final makeController = TextEditingController();
+  /// Controller for the year text field.
+  final TextEditingController yearController = TextEditingController();
 
-  /// Controller for entering the car's model.
-  final modelController = TextEditingController();
+  /// Controller for the make text field.
+  final TextEditingController makeController = TextEditingController();
 
-  /// Controller for entering the car's price.
-  final priceController = TextEditingController();
+  /// Controller for the model text field.
+  final TextEditingController modelController = TextEditingController();
 
-  /// Controller for entering the car's kilometers driven.
-  final kmController = TextEditingController();
+  /// Controller for the price text field.
+  final TextEditingController priceController = TextEditingController();
+
+  /// Controller for the kilometers text field.
+  final TextEditingController kmController = TextEditingController();
 
   /// Stores values from the previous car entry for retrieval.
   Map<String, dynamic>? lastCarData;
@@ -98,11 +105,54 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   /// Builds the car list section displayed on the left side of tablet layouts,
   /// or as the main page on phones.
   Widget ListPage() {
-    return Column(
-      children: const [
-        Text("Car List", style: TextStyle(fontSize: 18)),
-        // ListView will be added here
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                selectedCar = null;
+                isCreatingNewCar = true;
+              });
+            },
+            child: const Text("Add New Car"),
+          ),
+          const SizedBox(height: 10),
+          cars.isEmpty
+              ? const Text(
+                  "There are no cars in the list",
+                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: cars.length,
+                    itemBuilder: (context, index) {
+                      final car = cars[index];
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCar = car;
+                            isCreatingNewCar = false;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                          child: Text(
+                            "${index + 1}: ${car.year} ${car.make} ${car.model}  \$${car.price}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+        ],
+      ),
     );
   }
 
