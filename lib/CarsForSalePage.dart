@@ -60,7 +60,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   void initState() {
     super.initState();
     _initDatabase();
-    _loadLastCarFromPrefs();
   }
 
   @override
@@ -189,6 +188,66 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       price: price,
       kilometers: km,
     );
+  }
+
+  Future<void> _submitNewCar(BuildContext context) async {
+    final parsed = _validateAndParseForm(context);
+    if (parsed == null) return;
+
+    final newCar = Car(
+      Car.ID++,
+      parsed.year,
+      parsed.make,
+      parsed.model,
+      parsed.price,
+      parsed.kilometers,
+    );
+
+    await carDAO.insertCar(newCar);
+    await _saveLastCarToPrefs();
+
+    await _loadCarsFromDatabase();
+
+    setState(() {
+      selectedCar = null;
+      isCreatingNewCar = false;
+      _clearForm();
+    });
+  }
+
+  Future<void> _updateSelectedCar(BuildContext context) async {
+    if (selectedCar == null) return;
+
+    final parsed = _validateAndParseForm(context);
+    if (parsed == null) return;
+
+    selectedCar!
+      ..year = parsed.year
+      ..make = parsed.make
+      ..model = parsed.model
+      ..price = parsed.price
+      ..kilometers = parsed.kilometers;
+
+    await carDAO.updateCar(selectedCar!);
+    await _saveLastCarToPrefs();
+
+    await _loadCarsFromDatabase();
+
+    setState(() {});
+  }
+
+  Future<void> _deleteSelectedCar(BuildContext context) async {
+    if (selectedCar == null) return;
+
+    await carDAO.deleteCar(selectedCar!);
+
+    await _loadCarsFromDatabase();
+
+    setState(() {
+      selectedCar = null;
+      isCreatingNewCar = false;
+      _clearForm();
+    });
   }
 
   /// Determines and returns the appropriate layout depending on screen size.
