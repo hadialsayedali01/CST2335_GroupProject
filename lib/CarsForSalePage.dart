@@ -139,6 +139,58 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     });
   }
 
+  _ParsedCarForm? _validateAndParseForm(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
+    final yearText = yearController.text.trim();
+    final makeText = makeController.text.trim();
+    final modelText = modelController.text.trim();
+    final priceText = priceController.text.trim();
+    final kmText = kmController.text.trim();
+
+    // Basic empty-field validation
+    if (yearText.isEmpty ||
+        makeText.isEmpty ||
+        modelText.isEmpty ||
+        priceText.isEmpty ||
+        kmText.isEmpty) {
+      final msg = loc.translate("EmptyFieldsCar") ?? "All fields are required.";
+      setState(() {
+        formErrorMessage = msg;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      return null;
+    }
+
+    // Numeric parsing
+    final year = int.tryParse(yearText);
+    final price = double.tryParse(priceText);
+    final km = double.tryParse(kmText);
+
+    if (year == null ||
+        year <= 0 ||
+        price == null ||
+        price <= 0 ||
+        km == null ||
+        km < 0) {
+      const msg = "Enter valid numeric values.";
+      setState(() => formErrorMessage = msg);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text(msg)));
+      return null;
+    }
+
+    formErrorMessage = "";
+    return _ParsedCarForm(
+      year: year,
+      make: makeText,
+      model: modelText,
+      price: price,
+      kilometers: km,
+    );
+  }
+
   /// Determines and returns the appropriate layout depending on screen size.
   /// Phones show either the list or the details page, while tablets show both.
   Widget reactiveLayout() {
@@ -369,4 +421,21 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       body: reactiveLayout(),
     );
   }
+}
+
+/// Internal helper type representing parsed form values.
+class _ParsedCarForm {
+  final int year;
+  final String make;
+  final String model;
+  final double price;
+  final double kilometers;
+
+  _ParsedCarForm({
+    required this.year,
+    required this.make,
+    required this.model,
+    required this.price,
+    required this.kilometers,
+  });
 }
