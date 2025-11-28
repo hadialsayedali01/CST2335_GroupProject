@@ -18,5 +18,39 @@
   "EmptyFields": "Please enter a value for all fields.",
   "InstructionsTitle": "Instructions",
   "FullInstructions": "(1) Add customers using the 'Add Customer' button.\n(2) From the details form, you can load an existing customer or clear the fields.\n(3) Update or delete customers by clicking on an existing customer in the list, then clicking the appropriate button.\n",
-  "CustomerListTitle": "Customer List"
+  "CustomerListTitle": "Customer List",
+
+  "CarsForSale": "Cars for Sale",
+  "AddNewCar": "Add New Car",
+  "Year": "Year of Manufacture",
+  "Make": "Make",
+  "Model": "Model",
+  "Price": "Price",
+  "Kilometers": "Kilometers Driven",
+
+  "CarAdded": "Car added",
+  "CarUpdated": "Car updated",
+  "CarDeleted": "Car deleted",
+
+  "NoCars": "There are no cars in the list.",
+  "EmptyFieldsCar": "Please enter a value for all fields.",
+
+  "LoadLastCar": "Load Last Car",
+  "ResetCarFields": "Reset Fields",
+
+  "DeleteCarConfirmTitle": "Delete Car",
+  "DeleteCarConfirmMessage": "Are you sure you want to delete this car?",
+  "Yes": "Yes",
+  "No": "No",
+
+  "CopyPreviousCarTitle": "Copy Previous Car?",
+  "CopyPreviousCarMessage": "Do you want to load the details of the last entered car?",
+  "Copy": "Copy",
+  "StartBlank": "Start Blank",
+
+  "CarInstructionsTitle": "Instructions",
+  "CarInstructions": "(1) Add cars using the 'Add New Car' button.\n(2) Select a car from the list to update or delete it.\n(3) Use 'Load Last Car' to copy the previously entered car details.\n(4) All fields must be filled before submitting.\n",
+
+  "CarListTitle": "Car List",
+  "Details": "Details"
 }
