@@ -1,15 +1,12 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../AppLocalizations.dart';
 import '../ProjectDatabase.dart';
-import '../main.dart';
 import '../models/Car.dart';
 import '../DAOs/CarDAO.dart';
 
-/// Page for managing and viewing cars available for sale.
-/// This page will support listing, inserting, updating, and viewing details
-/// of cars, with full responsive behavior for phone and tablet layouts.
 class CarsForSalePage extends StatefulWidget {
   const CarsForSalePage({Key? key}) : super(key: key);
 
@@ -17,43 +14,21 @@ class CarsForSalePage extends StatefulWidget {
   State<CarsForSalePage> createState() => CarsForSalePageState();
 }
 
-/// State class for the CarsForSalePage.
-/// Holds controllers, database access, selected item, and layout logic.
 class CarsForSalePageState extends State<CarsForSalePage> {
-  /// Data Access Object for performing database operations on Car records.
   late CarDAO carDAO;
 
-  /// List of cars loaded from the database.
   List<Car> cars = [];
-
-  /// Indicates that the form is currently being used to create a new car.
   bool isCreatingNewCar = false;
 
-  /// Controller for the year text field.
   final TextEditingController yearController = TextEditingController();
-
-  /// Controller for the make text field.
   final TextEditingController makeController = TextEditingController();
-
-  /// Controller for the model text field.
   final TextEditingController modelController = TextEditingController();
-
-  /// Controller for the price text field.
   final TextEditingController priceController = TextEditingController();
-
-  /// Controller for the kilometers text field.
   final TextEditingController kmController = TextEditingController();
 
-  /// Stores values from the previous car entry for retrieval.
-  Map<String, dynamic>? lastCarData;
-
-  /// The currently selected car, used in tablet or desktop layouts.
   Car? selectedCar;
 
-  /// Error message displayed below the form when validation fails.
   String formErrorMessage = "";
-
-  /// Encrypted preferences instance used to cache the last entered car.
   final EncryptedSharedPreferences encPrefs = EncryptedSharedPreferences();
 
   @override
@@ -72,27 +47,15 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     super.dispose();
   }
 
-  /// Returns true if the layout should be rendered as master–detail.
-  bool _isTabletLayout(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-    return (width > height) && (width > 720);
-  }
-
-  /// Clears all form fields and resets the error message.
   void _clearForm() {
-    setState(() {
-      yearController.text = "";
-      makeController.text = "";
-      modelController.text = "";
-      priceController.text = "";
-      kmController.text = "";
-      formErrorMessage = "";
-    });
+    yearController.text = "";
+    makeController.text = "";
+    modelController.text = "";
+    priceController.text = "";
+    kmController.text = "";
+    formErrorMessage = "";
   }
 
-  /// Copies the current content of the form into encrypted shared preferences.
   Future<void> _saveLastCarToPrefs() async {
     await encPrefs.setString("last_car_year", yearController.text);
     await encPrefs.setString("last_car_make", makeController.text);
@@ -101,7 +64,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     await encPrefs.setString("last_car_km", kmController.text);
   }
 
-  /// Loads the last saved car from encrypted shared preferences into the form.
   Future<void> _loadLastCarFromPrefs() async {
     final year = await encPrefs.getString("last_car_year");
     final make = await encPrefs.getString("last_car_make");
@@ -119,8 +81,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     });
   }
 
-  /// Initializes the database, obtains the ProjectDatabase instance,
-  /// and assigns the CarDAO used for all car-related operations.
   Future<void> _initDatabase() async {
     final db = await $FloorProjectDatabase
         .databaseBuilder('customer_database.db')
@@ -130,7 +90,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     await _loadCarsFromDatabase();
   }
 
-  /// Loads all car records from the database and updates the local list.
   Future<void> _loadCarsFromDatabase() async {
     final carList = await carDAO.getAllCars();
     setState(() {
@@ -139,41 +98,50 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   }
 
   _ParsedCarForm? _validateAndParseForm(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-
     final yearText = yearController.text.trim();
     final makeText = makeController.text.trim();
     final modelText = modelController.text.trim();
     final priceText = priceController.text.trim();
     final kmText = kmController.text.trim();
 
-    // Basic empty-field validation
     if (yearText.isEmpty ||
         makeText.isEmpty ||
         modelText.isEmpty ||
         priceText.isEmpty ||
         kmText.isEmpty) {
-      final msg = loc.translate("EmptyFieldsCar") ?? "All fields are required.";
-      setState(() {
-        formErrorMessage = msg;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      const msg = "All fields are required.";
+      formErrorMessage = msg;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text(msg)));
       return null;
     }
 
-    // Numeric parsing
     final year = int.tryParse(yearText);
     final price = double.tryParse(priceText);
     final km = double.tryParse(kmText);
 
-    if (year == null ||
-        year <= 0 ||
-        price == null ||
-        price <= 0 ||
-        km == null ||
-        km < 0) {
-      const msg = "Enter valid numeric values.";
-      setState(() => formErrorMessage = msg);
+    if (year == null || year < 1900 || year > DateTime.now().year + 1) {
+      const msg = "Enter a valid year.";
+      formErrorMessage = msg;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text(msg)));
+      return null;
+    }
+
+    if (price == null || price <= 0) {
+      const msg = "Price must be greater than 0.";
+      formErrorMessage = msg;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text(msg)));
+      return null;
+    }
+
+    if (km == null || km < 0) {
+      const msg = "Kilometers cannot be negative.";
+      formErrorMessage = msg;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text(msg)));
@@ -205,14 +173,18 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
     await carDAO.insertCar(newCar);
     await _saveLastCarToPrefs();
-
     await _loadCarsFromDatabase();
 
     setState(() {
       selectedCar = null;
       isCreatingNewCar = false;
-      _clearForm();
     });
+
+    _clearForm();
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Car added successfully")));
   }
 
   Future<void> _updateSelectedCar(BuildContext context) async {
@@ -230,34 +202,65 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
     await carDAO.updateCar(selectedCar!);
     await _saveLastCarToPrefs();
-
     await _loadCarsFromDatabase();
 
-    setState(() {});
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Car updated")));
   }
 
   Future<void> _deleteSelectedCar(BuildContext context) async {
     if (selectedCar == null) return;
 
-    await carDAO.deleteCar(selectedCar!);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Confirm delete"),
+        content: const Text("Are you sure you want to delete this car?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
 
+    if (confirmed != true) return;
+
+    await carDAO.deleteCar(selectedCar!);
     await _loadCarsFromDatabase();
 
     setState(() {
       selectedCar = null;
       isCreatingNewCar = false;
-      _clearForm();
+    });
+
+    _clearForm();
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Car deleted")));
+  }
+
+  void _populateFormFromCar(Car car) {
+    setState(() {
+      yearController.text = car.year.toString();
+      makeController.text = car.make;
+      modelController.text = car.model;
+      priceController.text = car.price.toString();
+      kmController.text = car.kilometers.toString();
+      formErrorMessage = "";
     });
   }
 
-  /// Determines and returns the appropriate layout depending on screen size.
-  /// Phones show either the list or the details page, while tablets show both.
   Widget reactiveLayout() {
-    var size = MediaQuery.of(context).size;
-    var height = size.height;
-    var width = size.width;
-
-    if ((width > height) && (width > 720)) {
+    final size = MediaQuery.of(context).size;
+    if (size.width > size.height && size.width > 720) {
       return Row(
         children: [
           Expanded(flex: 1, child: ListPage()),
@@ -266,15 +269,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       );
     }
 
-    if (selectedCar == null) {
-      return ListPage();
-    } else {
-      return DetailsPage();
-    }
+    return selectedCar == null ? ListPage() : DetailsPage();
   }
 
-  /// Builds the car list section displayed on the left side of tablet layouts,
-  /// or as the main page on phones.
   Widget ListPage() {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -285,6 +282,7 @@ class CarsForSalePageState extends State<CarsForSalePage> {
               setState(() {
                 selectedCar = null;
                 isCreatingNewCar = true;
+                _clearForm();
               });
             },
             child: const Text("Add New Car"),
@@ -302,6 +300,7 @@ class CarsForSalePageState extends State<CarsForSalePage> {
                       final car = cars[index];
                       return GestureDetector(
                         onTap: () {
+                          _populateFormFromCar(car);
                           setState(() {
                             selectedCar = car;
                             isCreatingNewCar = false;
@@ -327,31 +326,20 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     );
   }
 
-  /// Builds the details form section.
-  /// If selectedCar == null → Add Mode
-  /// If selectedCar != null → Edit Mode
   Widget DetailsPage() {
-    final bool editing = selectedCar != null;
+    final editing = selectedCar != null;
 
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // ----------------------------------------------------
-            // Load Previous Car
-            // ----------------------------------------------------
             ElevatedButton(
               onPressed: _loadLastCarFromPrefs,
               child: const Text("Load Previous Car"),
             ),
-
             const SizedBox(height: 16),
 
-            // ----------------------------------------------------
-            // Title
-            // ----------------------------------------------------
             Text(
               editing ? "Edit Car" : "Add New Car",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -359,12 +347,10 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
             const SizedBox(height: 20),
 
-            // ----------------------------------------------------
-            // Fields
-            // ----------------------------------------------------
             TextField(
               controller: yearController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "Year",
@@ -393,6 +379,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
             TextField(
               controller: priceController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+              ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "Price",
@@ -403,6 +392,9 @@ class CarsForSalePageState extends State<CarsForSalePage> {
             TextField(
               controller: kmController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+              ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "Kilometers",
@@ -411,56 +403,39 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
             const SizedBox(height: 20),
 
-            // ----------------------------------------------------
-            // Error text
-            // ----------------------------------------------------
             if (formErrorMessage.isNotEmpty)
               Text(formErrorMessage, style: const TextStyle(color: Colors.red)),
 
             const SizedBox(height: 20),
 
-            // ----------------------------------------------------
-            // Buttons
-            // ----------------------------------------------------
             Wrap(
               spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
               children: [
-                // ADD (only in Add Mode)
                 if (!editing)
                   ElevatedButton(
                     onPressed: () => _submitNewCar(context),
                     child: const Text("Add"),
                   ),
-
-                // UPDATE (only in Edit Mode)
                 if (editing)
                   ElevatedButton(
                     onPressed: () => _updateSelectedCar(context),
                     child: const Text("Update"),
                   ),
-
-                // DELETE (only in Edit Mode)
                 if (editing)
                   ElevatedButton(
                     onPressed: () => _deleteSelectedCar(context),
                     child: const Text("Delete"),
                   ),
-
-                // RESET fields
                 ElevatedButton(
                   onPressed: _clearForm,
                   child: const Text("Reset Fields"),
                 ),
-
-                // CLOSE form
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
                       selectedCar = null;
                       isCreatingNewCar = false;
-                      formErrorMessage = "";
+                      _clearForm();
                     });
                   },
                   child: const Text("Close"),
@@ -482,7 +457,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   }
 }
 
-/// Internal helper type representing parsed form values.
 class _ParsedCarForm {
   final int year;
   final String make;
