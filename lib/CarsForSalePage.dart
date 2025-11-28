@@ -50,11 +50,74 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   /// The currently selected car, used in tablet or desktop layouts.
   Car? selectedCar;
 
+  /// Error message displayed below the form when validation fails.
+  String formErrorMessage = "";
+
+  /// Encrypted preferences instance used to cache the last entered car.
+  final EncryptedSharedPreferences encPrefs = EncryptedSharedPreferences();
+
   @override
   void initState() {
     super.initState();
     _initDatabase();
     _loadLastCarFromPrefs();
+  }
+
+  @override
+  void dispose() {
+    yearController.dispose();
+    makeController.dispose();
+    modelController.dispose();
+    priceController.dispose();
+    kmController.dispose();
+    super.dispose();
+  }
+
+  /// Returns true if the layout should be rendered as master–detail.
+  bool _isTabletLayout(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+    return (width > height) && (width > 720);
+  }
+
+  /// Clears all form fields and resets the error message.
+  void _clearForm() {
+    setState(() {
+      yearController.text = "";
+      makeController.text = "";
+      modelController.text = "";
+      priceController.text = "";
+      kmController.text = "";
+      formErrorMessage = "";
+    });
+  }
+
+  /// Copies the current content of the form into encrypted shared preferences.
+  Future<void> _saveLastCarToPrefs() async {
+    await encPrefs.setString("last_car_year", yearController.text);
+    await encPrefs.setString("last_car_make", makeController.text);
+    await encPrefs.setString("last_car_model", modelController.text);
+    await encPrefs.setString("last_car_price", priceController.text);
+    await encPrefs.setString("last_car_km", kmController.text);
+  }
+
+  /// Loads the last saved car from encrypted shared preferences into the form.
+  Future<void> _loadLastCarFromPrefs() async {
+    final year = await encPrefs.getString("last_car_year");
+    final make = await encPrefs.getString("last_car_make");
+    final model = await encPrefs.getString("last_car_model");
+    final price = await encPrefs.getString("last_car_price");
+    final km = await encPrefs.getString("last_car_km");
+
+    setState(() {
+      yearController.text = year ?? "";
+      makeController.text = make ?? "";
+      modelController.text = model ?? "";
+      priceController.text = price ?? "";
+      kmController.text = km ?? "";
+      formErrorMessage = "";
+    });
   }
 
   /// Initializes the database, obtains the ProjectDatabase instance,
@@ -75,9 +138,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       cars = carList;
     });
   }
-
-  /// Loads stored last-entry car data from encrypted shared preferences.
-  Future<void> _loadLastCarFromPrefs() async {}
 
   /// Determines and returns the appropriate layout depending on screen size.
   /// Phones show either the list or the details page, while tablets show both.
@@ -156,20 +216,149 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     );
   }
 
-  /// Builds the details section for the selected car,
-  /// or a placeholder if nothing is selected.
+  /// Builds the details form section.
+  /// If selectedCar == null → Add Mode
+  /// If selectedCar != null → Edit Mode
   Widget DetailsPage() {
-    if (selectedCar != null) {
-      return Column(
-        children: const [
-          Text("Details", style: TextStyle(fontSize: 18)),
-          // Car details UI will go here
-        ],
-      );
-    }
+    final bool editing = selectedCar != null;
 
-    return const Center(
-      child: Text("Details Placeholder", style: TextStyle(fontSize: 18)),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ----------------------------------------------------
+            // Load Previous Car
+            // ----------------------------------------------------
+            ElevatedButton(
+              onPressed: _loadLastCarFromPrefs,
+              child: const Text("Load Previous Car"),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ----------------------------------------------------
+            // Title
+            // ----------------------------------------------------
+            Text(
+              editing ? "Edit Car" : "Add New Car",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ----------------------------------------------------
+            // Fields
+            // ----------------------------------------------------
+            TextField(
+              controller: yearController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Year",
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: makeController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Make",
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: modelController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Model",
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: priceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Price",
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: kmController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Kilometers",
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ----------------------------------------------------
+            // Error text
+            // ----------------------------------------------------
+            if (formErrorMessage.isNotEmpty)
+              Text(formErrorMessage, style: const TextStyle(color: Colors.red)),
+
+            const SizedBox(height: 20),
+
+            // ----------------------------------------------------
+            // Buttons
+            // ----------------------------------------------------
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              alignment: WrapAlignment.center,
+              children: [
+                // ADD (only in Add Mode)
+                if (!editing)
+                  ElevatedButton(
+                    onPressed: () => _submitNewCar(context),
+                    child: const Text("Add"),
+                  ),
+
+                // UPDATE (only in Edit Mode)
+                if (editing)
+                  ElevatedButton(
+                    onPressed: () => _updateSelectedCar(context),
+                    child: const Text("Update"),
+                  ),
+
+                // DELETE (only in Edit Mode)
+                if (editing)
+                  ElevatedButton(
+                    onPressed: () => _deleteSelectedCar(context),
+                    child: const Text("Delete"),
+                  ),
+
+                // RESET fields
+                ElevatedButton(
+                  onPressed: _clearForm,
+                  child: const Text("Reset Fields"),
+                ),
+
+                // CLOSE form
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedCar = null;
+                      isCreatingNewCar = false;
+                      formErrorMessage = "";
+                    });
+                  },
+                  child: const Text("Close"),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
