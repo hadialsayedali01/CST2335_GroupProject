@@ -1,30 +1,30 @@
 import 'package:floor/floor.dart';
 
+/// Represents a [Car] entity in the database.
+///
+/// This class maps to the 'Car' table.
 @entity
 class Car {
-
-  static int ID = 1;
-
+  /// The unique identifier for the car.
+  /// Marked as the primary key.
   @primaryKey
-  int id;
+  final int? id;
+
+  /// The manufacturing year of the car.
   int year;
+
+  /// The manufacturer of the car (e.g., Toyota, Ford).
   String make;
+
+  /// The specific model name of the car (e.g., Camry, Mustang).
   String model;
+
+  /// The listing price of the car.
   double price;
+
+  /// The distance the car has traveled in kilometers.
   double kilometers;
 
-  Car(
-      this.id,
-      this.year,
-      this.make,
-      this.model,
-      this.price,
-      this.kilometers
-      ){
-    if (this.id > ID){
-      ID = this.id + 1;
-    }
-  }
-
-
+  /// Creates a new [Car] instance.
+  Car(this.id, this.year, this.make, this.model, this.price, this.kilometers);
 }

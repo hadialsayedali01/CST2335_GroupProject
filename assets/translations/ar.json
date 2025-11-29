@@ -27,13 +27,18 @@
   "Model": "الطراز",
   "Price": "السعر",
   "Kilometers": "عدد الكيلومترات المقطوعة",
-
+  "KilometersDriven": "عدد الكيلومترات المقطوعة",
   "CarAdded": "تمت إضافة السيارة",
   "CarUpdated": "تم تحديث السيارة",
   "CarDeleted": "تم حذف السيارة",
 
   "NoCars": "لا توجد سيارات في القائمة.",
   "EmptyFieldsCar": "الرجاء إدخال قيمة في جميع الحقول.",
+
+  "InvalidYear": "أدخل سنة صحيحة.",
+  "InvalidPrice": "يجب أن يكون السعر أكبر من 0.",
+  "InvalidKilometers": "الرجاء إدخال رقم صالح في خانة عدد الكيلومترات.",
+  "NoCarSelected": "لا يوجد سيارة محددة للتعديل.",
 
   "LoadLastCar": "تحميل آخر سيارة",
   "ResetCarFields": "إعادة تعيين الحقول",
@@ -42,6 +47,10 @@
   "DeleteCarConfirmMessage": "هل أنت متأكد أنك تريد حذف هذه السيارة؟",
   "Yes": "نعم",
   "No": "لا",
+
+  "ConfirmUpdateTitle": "تأكيد التحديث",
+  "ConfirmUpdateMessage": "هل أنت متأكد أنك تريد تحديث هذه السيارة؟",
+  "Cancel": "إلغاء",
 
   "CopyPreviousCarTitle": "نسخ بيانات السيارة السابقة؟",
   "CopyPreviousCarMessage": "هل ترغب في تحميل تفاصيل آخر سيارة تم إدخالها؟",
