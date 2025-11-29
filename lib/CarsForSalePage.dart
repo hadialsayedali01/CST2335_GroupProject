@@ -18,12 +18,10 @@ import '../DAOs/CarDAO.dart';
 /// - Responsive layout (master–detail on tablet, single page on phone),
 /// - Basic localization of labels and messages using [AppLocalizations].
 class CarsForSalePage extends StatefulWidget {
-  /// Default constructor for the CarsForSalePage widget.
-  const CarsForSalePage({Key? key}) : super(key: key);
-
-  /// Creates the mutable state that holds all logic for this page.
   @override
-  State<CarsForSalePage> createState() => CarsForSalePageState();
+  State<CarsForSalePage> createState() {
+    return CarsForSalePageState();
+  }
 }
 
 /// State class that contains all UI state, controllers, and database interaction
