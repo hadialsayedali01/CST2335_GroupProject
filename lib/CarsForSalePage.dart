@@ -618,10 +618,12 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       editing = false;
     }
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Button to load the last saved car from encrypted prefs.
             ElevatedButton(
