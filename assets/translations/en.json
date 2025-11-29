@@ -39,6 +39,7 @@
   "InvalidYear": "Enter a valid year.",
   "InvalidPrice": "Price must be greater than 0.",
   "InvalidKilometers": "Please enter a valid number for the kilometers field.",
+  "NoCarSelected": "No car is selected to update.",
 
   "LoadLastCar": "Load Last Car",
   "ResetCarFields": "Reset Fields",
@@ -47,6 +48,10 @@
   "DeleteCarConfirmMessage": "Are you sure you want to delete this car?",
   "Yes": "Yes",
   "No": "No",
+
+  "ConfirmUpdateTitle": "Confirm Update",
+  "ConfirmUpdateMessage": "Are you sure you want to update this car?",
+  "Cancel": "Cancel",
 
   "CopyPreviousCarTitle": "Copy Previous Car?",
   "CopyPreviousCarMessage": "Do you want to load the details of the last entered car?",

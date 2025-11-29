@@ -289,11 +289,12 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   /// Steps:
   /// 1. Ensures [selectedCar] is not null.
   /// 2. Validates and parses the form.
-  /// 3. Copies the parsed values into [selectedCar].
-  /// 4. Calls [carDAO.updateCar] to persist changes.
-  /// 5. Saves the last car form values.
-  /// 6. Reloads the list of cars from the database.
-  /// 7. Shows a localized "CarUpdated" [SnackBar].
+  /// 3. Prompts the user with a confirmation dialog.
+  /// 4. Applies the parsed form values to [selectedCar].
+  /// 5. Persists the updated car using [carDAO.updateCar].
+  /// 6. Saves the current form values to encrypted preferences.
+  /// 7. Reloads the car list from the database.
+  /// 8. Displays a localized "CarUpdated" SnackBar.
   Future<void> _updateSelectedCar(BuildContext context) async {
     // If no car is selected, there is nothing to update.
     if (selectedCar == null) return;
@@ -302,7 +303,32 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     final parsed = _validateAndParseForm(context);
     if (parsed == null) return;
 
-    // Mutate the selectedCar fields with the new parsed values.
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)!.translate("ConfirmUpdateTitle")!,
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.translate("ConfirmUpdateMessage")!,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)!.translate("Cancel")!),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppLocalizations.of(context)!.translate("Update")!),
+          ),
+        ],
+      ),
+    );
+
+    // User canceled.
+    if (confirmed != true) return;
+
+    // Apply the parsed form values to the currently selected car.
     selectedCar!.year = parsed.year;
     selectedCar!.make = parsed.make;
     selectedCar!.model = parsed.model;
@@ -370,11 +396,11 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     // Reload cars from database to remove the deleted entry from the UI.
     await _loadCarsFromDatabase();
 
-    // Clear selection and mode flags.
-    setState(() {
-      selectedCar = null;
-      isCreatingNewCar = false;
-    });
+    // // Clear selection and mode flags.
+    // setState(() {
+    //   selectedCar = null;
+    //   isCreatingNewCar = false;
+    // });
 
     // Clear any form inputs.
     _clearForm();
@@ -463,7 +489,7 @@ class CarsForSalePageState extends State<CarsForSalePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Main title: Year + Make + Model.
+          // Main title: Id + Year + Make + Model.
           Text(
             "${car.id}: ${car.year} ${car.make} ${car.model}",
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
@@ -499,7 +525,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          // A subtle drop shadow to visually elevate the field.
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
@@ -523,7 +548,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   }
 
   /// Builds the "list" page that shows all cars and an "Add New Car" button.
-  ///
   /// On tablet, this is the left pane. On mobile, this takes the full screen
   /// when not in details mode.
   Widget ListPage() {
@@ -580,12 +604,19 @@ class CarsForSalePageState extends State<CarsForSalePage> {
   ///   - "Load Last Car" button,
   ///   - Dynamic title ("Details" or "Add New Car"),
   ///   - Styled text fields,
-  ///   - Validation error message (if any),
+  ///   - Validation error messages,
   ///   - Action buttons:
   ///     - Add, Update, Remove, Reset, Close.
   Widget DetailsPage() {
     // Determine whether we are editing an existing car or creating a new one.
-    final editing = selectedCar != null;
+    bool editing;
+    if (selectedCar != null) {
+      // A car has been selected from the list, so the form is in "edit" mode.
+      editing = true;
+    } else {
+      // No car is selected, so the form is in "add new car" mode.
+      editing = false;
+    }
 
     return SingleChildScrollView(
       child: Padding(
@@ -649,7 +680,7 @@ class CarsForSalePageState extends State<CarsForSalePage> {
 
             const SizedBox(height: 20),
 
-            // If there is a validation error message, show it in red.
+            // If there is a validation error message, show it.
             if (formErrorMessage.isNotEmpty)
               Text(formErrorMessage, style: const TextStyle(color: Colors.red)),
             const SizedBox(height: 20),
