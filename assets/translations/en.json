@@ -36,6 +36,10 @@
   "NoCars": "There are no cars in the list.",
   "EmptyFieldsCar": "Please enter a value for all fields.",
 
+  "InvalidYear": "Enter a valid year.",
+  "InvalidPrice": "Price must be greater than 0.",
+  "InvalidKilometers": "Please enter a valid number for the kilometers field.",
+
   "LoadLastCar": "Load Last Car",
   "ResetCarFields": "Reset Fields",
 
