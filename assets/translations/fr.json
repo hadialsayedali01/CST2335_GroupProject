@@ -1,22 +1,66 @@
 {
-  "AddNewCustomer": "Ajouter Un Client",
+  "AddNewCustomer": "Ajouter un nouveau client",
   "Add": "Ajouter",
-  "Remove": "Retirer",
+  "Remove": "Supprimer",
   "Close": "Fermer",
   "English": "Anglais",
   "French": "Français",
-  "Update": "Modifier",
+  "Update": "Mettre à jour",
   "FirstName": "Prénom",
   "LastName": "Nom de famille",
   "Address": "Adresse",
   "DateOfBirth": "Date de naissance",
   "DriversLicense": "Permis de conduire",
   "NoCustomer": "Il n'y a aucun client dans la liste.",
-  "LoadLastCustomer": "Presenter dernier client",
-  "ResetFields": "Réinitialiser",
+  "LoadLastCustomer": "Charger le dernier client",
+  "ResetFields": "Réinitialiser les champs",
   "CustomerAdded": "Client ajouté",
-  "EmptyFields": "Veuillez saisir une valeur dans toutes les cases.",
+  "EmptyFields": "Veuillez saisir une valeur pour tous les champs.",
   "InstructionsTitle": "Instructions",
-  "FullInstructions": "(1) Ajoutez des clients à l'aide du bouton « Ajouter un client ». \n(2) À partir du formulaire de détails, vous pouvez charger un client existant ou effacer les champs. \n(3) Mettez à jour ou supprimez des clients en cliquant sur un client existant dans la liste, puis en cliquant sur le bouton approprié.",
-  "CustomerListTitle": "Liste des Clients"
+  "FullInstructions": "(1) Ajoutez des clients en utilisant le bouton 'Ajouter un client'.\n(2) À partir du formulaire de détails, vous pouvez charger un client existant ou effacer les champs.\n(3) Mettez à jour ou supprimez des clients en cliquant sur un client dans la liste, puis sur le bouton approprié.\n",
+  "CustomerListTitle": "Liste des clients",
+
+  "CarsForSale": "Voitures à vendre",
+  "AddNewCar": "Ajouter une nouvelle voiture",
+  "Year": "Année de fabrication",
+  "Make": "Marque",
+  "Model": "Modèle",
+  "Price": "Prix",
+  "Kilometers": "Kilométrage",
+  "KilometersDriven": "Kilométrage",
+
+  "CarAdded": "Voiture ajoutée",
+  "CarUpdated": "Voiture mise à jour",
+  "CarDeleted": "Voiture supprimée",
+
+  "NoCars": "Il n'y a aucune voiture dans la liste.",
+  "EmptyFieldsCar": "Veuillez saisir une valeur pour tous les champs.",
+
+  "InvalidYear": "Saisissez une année valide.",
+  "InvalidPrice": "Le prix doit être supérieur à 0.",
+  "InvalidKilometers": "Veuillez saisir un nombre valide pour le kilométrage.",
+  "NoCarSelected": "Aucune voiture sélectionnée pour la mise à jour.",
+
+  "LoadLastCar": "Charger la dernière voiture",
+  "ResetCarFields": "Réinitialiser les champs",
+
+  "DeleteCarConfirmTitle": "Supprimer la voiture",
+  "DeleteCarConfirmMessage": "Êtes-vous sûr de vouloir supprimer cette voiture ?",
+  "Yes": "Oui",
+  "No": "Non",
+
+  "ConfirmUpdateTitle": "Confirmer la mise à jour",
+  "ConfirmUpdateMessage": "Êtes-vous sûr de vouloir mettre à jour cette voiture ?",
+  "Cancel": "Annuler",
+
+  "CopyPreviousCarTitle": "Copier la voiture précédente ?",
+  "CopyPreviousCarMessage": "Voulez-vous charger les détails de la dernière voiture saisie ?",
+  "Copy": "Copier",
+  "StartBlank": "Commencer vide",
+
+  "CarInstructionsTitle": "Instructions",
+  "CarInstructions": "(1) Ajoutez des voitures en utilisant le bouton 'Ajouter une nouvelle voiture'.\n(2) Sélectionnez une voiture dans la liste pour la mettre à jour ou la supprimer.\n(3) Utilisez 'Charger la dernière voiture' pour copier les détails de la voiture précédente.\n(4) Tous les champs doivent être remplis avant la soumission.\n",
+
+  "CarListTitle": "Liste des voitures",
+  "Details": "Détails"
 }
