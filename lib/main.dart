@@ -161,13 +161,6 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                returnFormattedImage('images/purchase_offer.jpg')!, //PLACEHOLDER IMAGE
-                returnFormattedImage('images/purchase_offer.jpg')!,
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
                 returnFormattedHomeButton("customerList", "Customer List")!,
                 returnFormattedHomeButton("purchaseOffer", "Purchase Offer")!,
               ],
