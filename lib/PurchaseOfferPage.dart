@@ -1,4 +1,10 @@
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'AppLocalizations.dart';
+import 'ProjectDatabase.dart';
+import 'main.dart';
+import 'models/PurchaseOffer.dart';
+import 'DAOs/PurchaseOfferDAO.dart';
 
 class PurchaseOfferPage extends StatefulWidget {
   @override

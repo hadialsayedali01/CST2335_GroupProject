@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Padding(
       padding: EdgeInsets.all(15),
       child: CircleAvatar(
-        radius: 150,
+        radius: 115,
         backgroundImage: AssetImage(imageSource!),
       ),
     );
@@ -156,6 +156,13 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 returnFormattedHomeButton("boatsForSale", "Boat List")!,
                 returnFormattedHomeButton("carsForSale", "Car List")!,
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                returnFormattedImage('images/purchase_offer.jpg')!, //PLACEHOLDER IMAGE
+                returnFormattedImage('images/purchase_offer.jpg')!,
               ],
             ),
             Row(
