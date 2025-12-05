@@ -62,5 +62,49 @@
   "CarInstructions": "(1) Add cars using the 'Add New Car' button.\n(2) Select a car from the list to update or delete it.\n(3) Use 'Load Last Car' to copy the previously entered car details.\n(4) All fields must be filled before submitting.\n",
 
   "CarListTitle": "Car List",
-  "Details": "Details"
+  "Details": "Details",
+
+  "British": "English",
+  "American": "American English",
+
+  "PurchaseOfferListTitle": "Purchase Offer Records",
+
+  "PurchaseOfferInstructionsTitle": "Instructions",
+  "PurchaseOfferInstructions": "(1) Add new Purchase Offers by filling in the fields and pressing the 'Submit Purchase Offer' button.\n(2) Select a saved Purchase Offer from the list to update or delete it\n(3) Use 'Load Previous Purchase Offer' to retrieve the info of the last Purchase Offer entry\n(4) All fields must be filled before submitting.\n",
+
+
+  "Accept/Reject?": "Accepted or Rejected?",
+  "PurchaseOfferSubmit": "Submit Purchase Offer",
+
+
+  "UserIDHint": "User ID",
+  "VehicleIDHint": "Vehicle ID",
+  "OfferPriceHint": "Offer Price",
+  "OfferDateHint": "Date of Offer (DD/MM/YYYY)",
+  "OfferStatusHint": "Accept/Reject?",
+
+  "BadEntries": "All fields must be filled to record a Purchase Offer",
+  "OfferSelect": "Select a Purchase Offer for more details",
+
+  "NoPurchaseOffers": "There are no Purchase Offers",
+
+  "OfferID": "Offer ID: ",
+  "CustomerID": "Customer ID: ",
+  "VehicleID": "Vehicle ID: ",
+  "OfferPrice": "Offer Price: $",
+  "OfferDate": "Offer Date: ",
+  "OfferStatus": "Offer Status: ",
+
+  "DeleteOffer": "Delete Offer",
+  "UpdateOffer": "Update Offer",
+  "UpdateConfirm": "Offer Updated",
+
+  "DeleteRequest": "Delete this Purchase Offer from the records?",
+  "DeleteVerify": "Are you sure?",
+  "DeleteConfirm": "Confirm Delete",
+  "DeleteCancel": "Cancel Delete",
+
+  "ReloadOffer": "Load Previous Offer Details",
+
+  "CloseOffers": "Close Details"
 }
