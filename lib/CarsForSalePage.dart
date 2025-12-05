@@ -17,6 +17,7 @@ import '../DAOs/CarDAO.dart';
 /// - Loading and saving the last entered car fields using encrypted shared preferences,
 /// - Responsive layout (master–detail on tablet, single page on phone),
 /// - Basic localization of labels and messages using [AppLocalizations].
+/// @author Anas Sadek
 class CarsForSalePage extends StatefulWidget {
   @override
   State<CarsForSalePage> createState() {
