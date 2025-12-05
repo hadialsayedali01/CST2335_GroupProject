@@ -248,7 +248,33 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     final parsed = _validateAndParseForm(context);
     if (parsed == null) return;
 
-    // Create a new Car instance using the static ID counter.
+    // Confirm before adding the new car.
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)!.translate("ConfirmAddTitle")!,
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.translate("ConfirmAddMessage")!,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)!.translate("Cancel")!),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppLocalizations.of(context)!.translate("Add")!),
+          ),
+        ],
+      ),
+    );
+
+    // User canceled or closed the dialog.
+    if (confirmed != true) return;
+
+    // Create a new Car instance if user clicked add.
     final newCar = Car(
       null,
       parsed.year,
@@ -264,12 +290,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     await _saveLastCarToPrefs();
     // Reload the full list of cars so the UI shows the new entry.
     await _loadCarsFromDatabase();
-
-    // // Reset selection and mode to exit the details view.
-    // setState(() {
-    //   selectedCar = null;
-    //   isCreatingNewCar = false;
-    // });
 
     // Clear the form fields.
     _clearForm();
@@ -393,12 +413,6 @@ class CarsForSalePageState extends State<CarsForSalePage> {
     await carDAO.deleteCar(selectedCar!);
     // Reload cars from database to remove the deleted entry from the UI.
     await _loadCarsFromDatabase();
-
-    // // Clear selection and mode flags.
-    // setState(() {
-    //   selectedCar = null;
-    //   isCreatingNewCar = false;
-    // });
 
     // Clear any form inputs.
     _clearForm();

@@ -53,6 +53,9 @@
   "ConfirmUpdateMessage": "Êtes-vous sûr de vouloir mettre à jour cette voiture ?",
   "Cancel": "Annuler",
 
+  "ConfirmAddTitle": "Confirmer l'ajout",
+  "ConfirmAddMessage": "Voulez vous vraiment ajouter cette nouvelle voiture ?",
+
   "CopyPreviousCarTitle": "Copier la voiture précédente ?",
   "CopyPreviousCarMessage": "Voulez-vous charger les détails de la dernière voiture saisie ?",
   "Copy": "Copier",

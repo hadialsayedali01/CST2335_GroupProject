@@ -53,6 +53,9 @@
   "ConfirmUpdateMessage": "Are you sure you want to update this car?",
   "Cancel": "Cancel",
 
+  "ConfirmAddTitle": "Confirm Add",
+  "ConfirmAddMessage": "Are you sure you want to add this new car?",
+
   "CopyPreviousCarTitle": "Copy Previous Car?",
   "CopyPreviousCarMessage": "Do you want to load the details of the last entered car?",
   "Copy": "Copy",
