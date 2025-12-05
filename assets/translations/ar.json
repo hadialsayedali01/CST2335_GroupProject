@@ -52,6 +52,9 @@
   "ConfirmUpdateMessage": "هل أنت متأكد أنك تريد تحديث هذه السيارة؟",
   "Cancel": "إلغاء",
 
+  "ConfirmAddTitle": "تأكيد الإضافة",
+  "ConfirmAddMessage": "هل أنت متأكد أنك تريد إضافة هذه السيارة؟",
+
   "CopyPreviousCarTitle": "نسخ بيانات السيارة السابقة؟",
   "CopyPreviousCarMessage": "هل ترغب في تحميل تفاصيل آخر سيارة تم إدخالها؟",
   "Copy": "نسخ",
