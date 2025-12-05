@@ -53,7 +53,7 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      supportedLocales: [Locale("ar"), Locale("en", "CA"), Locale("fr")],
+      supportedLocales: [Locale("ar"), Locale("en", "CA"), Locale("fr"), Locale("am"),],
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
