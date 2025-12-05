@@ -28,6 +28,8 @@ class PurchaseOfferPageState extends State<PurchaseOfferPage> {
 
   PurchaseOffer? selectedPurchaseOffer;
 
+  final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
+
   final TextEditingController customerIdController = TextEditingController();
 
   final TextEditingController vehicleIdController = TextEditingController();
@@ -64,12 +66,59 @@ class PurchaseOfferPageState extends State<PurchaseOfferPage> {
     statusController.dispose();
   }
 
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+        appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text("Purchase List")
+        ),
+        body: Center (
+            child:
+            reactiveLayout(),
+//            Column(
+//                mainAxisAlignment: MainAxisAlignment.start,
+//                children: [
+//                  Text("Purchase info...", style: titleFontStyle)
+//                ]
+//            )
+        )
+    );
+  }
+
+  Widget? reactiveLayout() {
+
+    var size = MediaQuery.of(context).size; //checks screen size
+    var height = size.height;
+    var width = size.width;
+
+    if ((width > height)&&(width > 720)) { //for tablets/Landscape
+      return Row(
+          children: [
+            Expanded(flex: 1, child: ListPage()),
+            Expanded(flex: 1, child: DetailsPage())
+          ]
+      );
+
+    }
+    else { //for phone/Portrait
+      if (selectedPurchaseOffer == null) {
+        return ListPage(); //show List
+      }
+      else {
+        return DetailsPage(); //show Details
+      }
+    }
+  }
+
   Widget DetailsPage() {
     if (selectedPurchaseOffer == null) {
       return Center(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text("Select a Purchase Offer for more details", style: myFontStyle),
-      ])
+        Column(crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Select a Purchase Offer for more details", style: myFontStyle),
+        ])
       );
     }
     else {
@@ -83,9 +132,7 @@ class PurchaseOfferPageState extends State<PurchaseOfferPage> {
         Text("Offer Status: ${selectedPurchaseOffer!.offerStatus}", style: myFontStyle),
         Spacer(),
         OutlinedButton(onPressed: (){
-          //setState(() {
-          //  selectedItem = null;
-          //});
+
           showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
@@ -122,131 +169,121 @@ class PurchaseOfferPageState extends State<PurchaseOfferPage> {
     //return Text("Details");
   }
 
-  Widget? ListPage(){
+  Widget ListPage(){
     return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child:Row(mainAxisAlignment: MainAxisAlignment.center,
+            child:Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children:[
-                  Flexible( flex:3, child:TextField(
+                  Flexible( flex:2, child:TextField(
                       controller: customerIdController, decoration: InputDecoration(
                       hintText:"User ID", border: OutlineInputBorder())
                   )
                   ),
-                  Flexible( flex:3, child:TextField(
+                  Flexible( flex:2, child:TextField(
                       controller: vehicleIdController, decoration: InputDecoration(
                       hintText:"Vehicle ID", border: OutlineInputBorder())
                   )
                   ),
-                  Flexible( flex:3, child:TextField(
+                  Flexible( flex:2, child:TextField(
                       controller: priceController, decoration: InputDecoration(
                       hintText:"Offer Price", border: OutlineInputBorder())
                   )
                   ),
-                  Flexible( flex:3, child:TextField(
-                      controller: dateController, decoration: InputDecoration(
-                      hintText:"Date of Offer", border: OutlineInputBorder())
-                  )
-                  ),
-                  Flexible( flex:3, child:TextField(
-                      controller: statusController, decoration: InputDecoration(
-                      hintText:"Accepted or Rejected?", border: OutlineInputBorder())
-                  )
-                  ),
-                  Flexible(
-                      flex:1,
-                      child: ElevatedButton( child:Text("Click here"), onPressed:() {
-                        setState(() {
-                          PurchaseOffer newPurchaseOffer = PurchaseOffer(
-                            PurchaseOffer.ID++, int.parse(customerIdController.value.text), int.parse(vehicleIdController.value.text),
-                            double.parse(priceController.value.text), dateController.value.text, statusController.value.text);
-                          offers.add(newPurchaseOffer);
-                          purchaseOfferDAO.insertPurchaseOffer(newPurchaseOffer);
-                          customerIdController.text = "";
-                          vehicleIdController.text = "";
-                          priceController.text = "";
-                          dateController.text = "";
-                          statusController.text = "";
-                        });
-                      } )
-
-                  )
                 ]
             ),
-
+          ),
+          Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child:Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children:[
+                Flexible(flex: 2, child:TextField(
+                    controller: dateController, decoration: InputDecoration(
+                    hintText:"Date of Offer (DD/MM/YYYY)", border: OutlineInputBorder())
+                )
+                ),
+                Flexible( flex:2, child:TextField(
+                  controller: statusController, decoration: InputDecoration(
+                  hintText:"Accepted or Rejected?", border: OutlineInputBorder())
+                )
+                ),
+              ]
+            ),
+          ),
+          Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child:Row(mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+            children:[
+              ElevatedButton( child:Text("Submit Purchase Offer"), onPressed:() {
+              setState(() {
+                PurchaseOffer newPurchaseOffer = PurchaseOffer(
+                  PurchaseOffer.ID++, int.parse(customerIdController.value.text),
+                  int.parse(vehicleIdController.value.text), double.parse(priceController.value.text),
+                  dateController.value.text, statusController.value.text
+                );
+                offers.add(newPurchaseOffer);
+                purchaseOfferDAO.insertPurchaseOffer(newPurchaseOffer);
+                customerIdController.text = "";
+                vehicleIdController.text = "";
+                priceController.text = "";
+                dateController.text = "";
+                statusController.text = "";
+              });
+              }),
+            ]),
           ),
           Expanded(child:
           (offers.isEmpty) ? //if true condition
           Text("There are no Purchase Offers")
-            : //else, or false condition
+              : //else, or false condition
           ListView.builder(
-            shrinkWrap: true,
-            itemCount: offers.length,
-            itemBuilder:(context, rowNum) =>
-              GestureDetector(child: Center(
-                child:Text(
-                  "${rowNum+1}: Offer ID: ${offers[rowNum].id} Customer ID: ${offers[rowNum].customerID}"
-                  "Vehicle ID: ${offers[rowNum].vehicleID} Offer Price: ${offers[rowNum].offerPrice}"
-                  "Date of Offer: ${offers[rowNum].offerDate} Offer Status: ${offers[rowNum].offerStatus}")) ,
+              shrinkWrap: true,
+              itemCount: offers.length,
+              itemBuilder:(context, rowNum) =>
+                  GestureDetector(child: Center(
+                      child:Text(
+                          "${rowNum+1}: Offer ID: ${offers[rowNum].id} Customer ID: ${offers[rowNum].customerID}"
+                              "Vehicle ID: ${offers[rowNum].vehicleID} Offer Price: ${offers[rowNum].offerPrice}"
+                              "Date of Offer: ${offers[rowNum].offerDate} Offer Status: ${offers[rowNum].offerStatus}")) ,
 
-                  onTap: () {
-                    setState(() {
-                      selectedPurchaseOffer = offers[rowNum];
-                    });
-                  },
+                      onTap: () {
+                        setState(() {
+                          selectedPurchaseOffer = offers[rowNum];
+                        });
+                      },
 
-                  onLongPress: () {
+                      onLongPress: () {
 
-                    showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Delete this item from the list?'),
-                        content: const Text('Are you sure?'),
-                        actions: <Widget>[
-                          FilledButton(child:Text("Confirm Delete"), onPressed:() {
-                            setState(() {
-                              PurchaseOffer delPurchaseOffer = PurchaseOffer(
-                                offers[rowNum].id, offers[rowNum].customerID, offers[rowNum].vehicleID,
-                                offers[rowNum].offerPrice, offers[rowNum].offerDate, offers[rowNum].offerStatus
-                              );
-                              offers.removeAt(rowNum);
-                              purchaseOfferDAO.deletePurchaseOffer(delPurchaseOffer);
-                            });
+                        showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Delete this item from the list?'),
+                              content: const Text('Are you sure?'),
+                              actions: <Widget>[
+                                FilledButton(child:Text("Confirm Delete"), onPressed:() {
+                                  setState(() {
+                                    PurchaseOffer delPurchaseOffer = PurchaseOffer(
+                                        offers[rowNum].id, offers[rowNum].customerID, offers[rowNum].vehicleID,
+                                        offers[rowNum].offerPrice, offers[rowNum].offerDate, offers[rowNum].offerStatus
+                                    );
+                                    offers.removeAt(rowNum);
+                                    purchaseOfferDAO.deletePurchaseOffer(delPurchaseOffer);
+                                  });
 
-                            Navigator.pop(context);
-                          }),
-                          FilledButton(child:Text("Cancel Delete"), onPressed:() {
-                            Navigator.pop(context);
-                          }),
-                        ],
-                      )
-                    );
-                  })
+                                  Navigator.pop(context);
+                                }),
+                                FilledButton(child:Text("Cancel Delete"), onPressed:() {
+                                  Navigator.pop(context);
+                                }),
+                              ],
+                            )
+                        );
+                      })
           )
-          )
-
+          ),
         ]);
   }
-
-  @override
-  Widget build(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Purchase List")
-      ),
-        body: Center (
-            child:
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text("Purchase info...", style: titleFontStyle)
-                ]
-            )
-        )
-    );
-  }
-
 }
