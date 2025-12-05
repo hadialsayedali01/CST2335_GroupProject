@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Padding(
       padding: EdgeInsets.all(15),
       child: CircleAvatar(
-        radius: 150,
+        radius: 115,
         backgroundImage: AssetImage(imageSource!),
       ),
     );
