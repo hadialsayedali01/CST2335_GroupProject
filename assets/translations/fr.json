@@ -65,5 +65,48 @@
   "CarInstructions": "(1) Ajoutez des voitures en utilisant le bouton 'Ajouter une nouvelle voiture'.\n(2) Sélectionnez une voiture dans la liste pour la mettre à jour ou la supprimer.\n(3) Utilisez 'Charger la dernière voiture' pour copier les détails de la voiture précédente.\n(4) Tous les champs doivent être remplis avant la soumission.\n",
 
   "CarListTitle": "Liste des voitures",
-  "Details": "Détails"
+  "Details": "Détails",
+
+  "British": "Anglais britannique",
+  "American": "Anglais américain",
+
+  "PurchaseOfferListTitle": "Dossiers d'offres d'achat",
+
+  "PurchaseOfferInstructionsTitle": "Instructions",
+  "PurchaseOfferInstructions": "(1) Ajoutez de nouvelles offres d'achat en remplissant les champs et en appuyant sur le bouton 'Soumettre l'offre d'achat'.\n(2) Sélectionnez une offre d'achat enregistrée pour la mettre à jour ou la supprimer.\n(3) Utilisez 'Charger l'offre d'achat précédente' pour récupérer les informations de la dernière offre saisie.\n(4) Tous les champs doivent être remplis avant la soumission.\n",
+
+  "Accept/Reject?": "Acceptée ou refusée ?",
+  "PurchaseOfferSubmit": "Soumettre l'offre d'achat",
+
+  "UserIDHint": "ID utilisateur",
+  "VehicleIDHint": "ID véhicule",
+  "OfferPriceHint": "Prix proposé",
+  "OfferDateHint": "Date de l'offre (JJ/MM/AAAA)",
+  "OfferStatusHint": "Acceptée/Refusée ?",
+
+  "BadEntries": "Tous les champs doivent être remplis pour enregistrer une offre d'achat",
+  "OfferSelect": "Sélectionnez une offre d'achat pour plus de détails",
+
+  "NoPurchaseOffers": "Il n'y a aucune offre d'achat",
+
+  "OfferID": "ID de l'offre : ",
+  "CustomerID": "ID client : ",
+  "VehicleID": "ID véhicule : ",
+  "OfferPrice": "Prix proposé : $",
+  "OfferDate": "Date de l'offre : ",
+  "OfferStatus": "Statut de l'offre : ",
+
+  "DeleteOffer": "Supprimer l'offre",
+  "UpdateOffer": "Mettre à jour l'offre",
+  "UpdateConfirm": "Offre mise à jour",
+
+  "DeleteRequest": "Supprimer cette offre d'achat des dossiers ?",
+  "DeleteVerify": "Êtes-vous sûr ?",
+  "DeleteConfirm": "Confirmer la suppression",
+  "DeleteCancel": "Annuler la suppression",
+
+  "ReloadOffer": "Charger les détails de l'offre précédente",
+
+  "CloseOffers": "Fermer les détails"
+
 }
