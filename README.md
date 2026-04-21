@@ -1,7 +1,6 @@
 # project_test
 
-A new Flutter project.
-
+(For CST2335: Mobile Graphical Interface Programming) A mobile application project that allows users to purchase cars and boats. Made using Dart and Flutter.
 ## Getting Started
 
 This project is a starting point for a Flutter application.
